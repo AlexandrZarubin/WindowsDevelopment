@@ -46,4 +46,5 @@ BOOL CALLBACK DlgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPAram)
 		break;
 	}
 	return FALSE;
+
 }
