@@ -1,9 +1,9 @@
-#include<windows.h>
+п»ї#include<windows.h>
 #include"resource.h"
-// hInstance — это дескриптор текущего экземпляра программы.
-// hPrevInstance — в 32-битных версиях Windows не используется (всегда NULL), но раньше указывал на предыдущий экземпляр программы.
-// lpCmdLine — строка команд, переданная программе (без имени программы).
-// nCmdShow — указывает, как нужно отображать окно (например, свернутое, развернутое и т.д.).
+// hInstance вЂ” СЌС‚Рѕ РґРµСЃРєСЂРёРїС‚РѕСЂ С‚РµРєСѓС‰РµРіРѕ СЌРєР·РµРјРїР»СЏСЂР° РїСЂРѕРіСЂР°РјРјС‹.
+// hPrevInstance вЂ” РІ 32-Р±РёС‚РЅС‹С… РІРµСЂСЃРёСЏС… Windows РЅРµ РёСЃРїРѕР»СЊР·СѓРµС‚СЃСЏ (РІСЃРµРіРґР° NULL), РЅРѕ СЂР°РЅСЊС€Рµ СѓРєР°Р·С‹РІР°Р» РЅР° РїСЂРµРґС‹РґСѓС‰РёР№ СЌРєР·РµРјРїР»СЏСЂ РїСЂРѕРіСЂР°РјРјС‹.
+// lpCmdLine вЂ” СЃС‚СЂРѕРєР° РєРѕРјР°РЅРґ, РїРµСЂРµРґР°РЅРЅР°СЏ РїСЂРѕРіСЂР°РјРјРµ (Р±РµР· РёРјРµРЅРё РїСЂРѕРіСЂР°РјРјС‹).
+// nCmdShow вЂ” СѓРєР°Р·С‹РІР°РµС‚, РєР°Рє РЅСѓР¶РЅРѕ РѕС‚РѕР±СЂР°Р¶Р°С‚СЊ РѕРєРЅРѕ (РЅР°РїСЂРёРјРµСЂ, СЃРІРµСЂРЅСѓС‚РѕРµ, СЂР°Р·РІРµСЂРЅСѓС‚РѕРµ Рё С‚.Рґ.).
 
 //#define MESSAGE_BOX
 
@@ -14,8 +14,8 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 #ifdef MESSAGE_BOX
 	MessageBox(
 		NULL,
-		"Hello WinAPI!\n Это окно сообщения",
-		"info/заголовок",
+		"Hello WinAPI!\n Р­С‚Рѕ РѕРєРЅРѕ СЃРѕРѕР±С‰РµРЅРёСЏ",
+		"info/Р·Р°РіРѕР»РѕРІРѕРє",
 		MB_YESNOCANCEL | MB_ICONQUESTION | MB_HELP | MB_DEFBUTTON2 | MB_SYSTEMMODAL
 	);
 #endif // MESSAGE_BOX
@@ -36,7 +36,7 @@ BOOL CALLBACK DlgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPAram)
 	case WM_COMMAND:
 		switch (LOWORD(wParam))
 		{
-		case IDOK:MessageBox(hwnd, "Была нажата кнопка ОК", "info", MB_OK | MB_ICONINFORMATION); break;
+		case IDOK:MessageBox(hwnd, "Р‘С‹Р»Р° РЅР°Р¶Р°С‚Р° РєРЅРѕРїРєР° РћРљ", "info", MB_OK | MB_ICONINFORMATION); break;
 		case IDCANCEL: EndDialog(hwnd, 0); break;
 		}
 		break;
