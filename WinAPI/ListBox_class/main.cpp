@@ -70,6 +70,27 @@ BOOL CALLBACK DlgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			case IDCANCEL: EndDialog(hwnd, 0); break;
 		}
 		break;
+	case WM_VKEYTOITEM:
+
+		switch (LOWORD(wParam))
+		{
+		//case VK_DELETE:SendMessage(hwnd, WM_COMMAND,LOWORD(IDC_BUTTON_REMOVE),0);break;
+		case VK_RETURN:
+		{
+			HWND hListBox = GetDlgItem(hwnd, IDC_LIST);
+			INT iSelected = SendMessage(hListBox, LB_GETCURSEL, 0, 0);
+			if (iSelected != LB_ERR)
+			{
+				DialogBoxParam(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_DIALOG_ADD_ITEM), hwnd, DlgProcAlterItem, 0);
+			}
+			//SendMessage(hwnd, WM_COMMAND, MAKEWPARAM(IDC_LIST, LBN_DBLCLK), 0);
+			return -2;
+		}
+		case VK_DELETE:SendMessage(hwnd, WM_COMMAND, MAKEWPARAM(IDC_BUTTON_REMOVE, 0),0);//break;
+			return -2;
+		default: return -1;
+		}
+		break;
 	case WM_CLOSE:
 		EndDialog(hwnd,0);break;
 		//EndDialog(hwnd, IDCANCEL);break;
