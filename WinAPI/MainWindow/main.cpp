@@ -15,6 +15,7 @@ INT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 // Основная функция программы
 INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, INT nCmdShow)
 {
+	//1) Регистрация класса окна:
 	WNDCLASSEX wClass;						// Создаем структуру WNDCLASSEX для регистрации класса окна
 	ZeroMemory(&wClass, sizeof(wClass));	// Обнуляем структуру для инициализации всех полей значениями по умолчанию
 	
