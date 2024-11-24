@@ -33,6 +33,9 @@
     <None Include="CUR\Pointer_gauntlet_cast_off.cur">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="cur\cursor2.cur">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Image Include="ICO\Computer.ico">

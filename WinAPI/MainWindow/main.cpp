@@ -1,4 +1,6 @@
-﻿#include <sstream>
+﻿#include <iostream>
+
+#include <sstream>
 #include"resource.h"
 #include<windows.h>
 
@@ -26,13 +28,13 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		NULL,					    //hInstance,					// Дескриптор ресурса (NULL, если загружаем из файла)
 		"ICO\\HomeServer.ico",		//MAKEINTRESOURCE(IDI_ICON),	// Полный путь к крупному значку
 		IMAGE_ICON,											// Тип изображения - значок
-		32,													// Ширина значка
-		32,													// Высота значка
+		LR_DEFAULTSIZE,													// Ширина значка
+		LR_DEFAULTSIZE,													// Высота значка
 		LR_LOADFROMFILE										// Флаг, указывающий на загрузку из файла
 	);
 
 								// Загружаем маленькую иконку для окна
-	//wClass.hIconSm = LoadIcon(NULL, IDI_APPLICATION);	
+	//wClass.hIconSm = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_ICON1));	
 	wClass.hIconSm = (HICON)LoadImage(
 		hInstance,										// Дескриптор текущего окна
 		MAKEINTRESOURCE(IDI_ICON1),						// Идентификатор ресурса иконки
@@ -42,15 +44,17 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		LR_SHARED										// Флаг, указывающий на использование ресурса
 	);
 								// Загружаем курсор для окна
-	//wClass.hCursor = LoadCursor(NULL, IDC_ARROW);		
+	//wClass.hCursor = LoadCursor(hInstance, MAKEINTRESOURCE(IDC_CURSOR2));
+	//wClass.hCursor = (HCURSOR)(hInstance, MAKEINTRESOURCE(IDC_CURSOR2));
 	wClass.hCursor = (HCURSOR)LoadImage(
 		hInstance,										// Дескриптор текущего окна
-		//"CUR\\Pointer_gauntlet_cast_off.cur",
+		//"CUR\\HOI4\\Busy Cursor.ani",
 		MAKEINTRESOURCE(IDC_CURSOR1),					// Идентификатор ресурса курсора
 		IMAGE_CURSOR,									// Тип ресурса - курсор
-		0,												// Ширина (0 для использования размера по умолчанию)
-		0,												// Высота (0 для использования размера по умолчанию)
+		0,									// Ширина (0 для использования размера по умолчанию)
+		0,									// Высота (0 для использования размера по умолчанию)
 		LR_SHARED										// Флаг совместного использования ресурса
+		//LR_LOADFROMFILE								// Флаг совместного использования ресурса
 	);		
 
 	wClass.hbrBackground = (HBRUSH)COLOR_WINDOW;		// Цвет фона окна
@@ -69,14 +73,14 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	}
 
 	//	Получаем размеры экрана
-	int screenWidth = GetSystemMetrics(SM_CXSCREEN);
-	int screenHeight = GetSystemMetrics(SM_CYSCREEN);
+	INT screenWidth = GetSystemMetrics(SM_CXSCREEN);
+	INT screenHeight = GetSystemMetrics(SM_CYSCREEN);
 	// Рассчитываем размеры окна (75% экрана)
-	int windowWidth = static_cast<int>(screenWidth * 0.75);
-	int windowHeight = static_cast<int>(screenHeight * 0.75);
+	INT windowWidth = static_cast<int>(screenWidth * 0.75);
+	INT windowHeight = static_cast<int>(screenHeight * 0.75);
 	// Рассчитываем координаты, чтобы окно было по центру
-	int windowPosX = (screenWidth - windowWidth) / 2;
-	int windowPosY = (screenHeight - windowHeight) / 2;
+	INT windowPosX = (screenWidth - windowWidth) / 2;
+	INT windowPosY = (screenHeight - windowHeight) / 2;
 	//
 
 	//2)Создание окна:
@@ -102,7 +106,7 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		MessageBox(NULL, "Window create failed", "", MB_OK | MB_ICONERROR);
 		return 0;
 	}
-	ShowWindow(hwnd, nCmdShow);//Задает режим отображение окна(Развернуто на весь экран,Свернуто в окно, вернуто на пеньль задач)
+	ShowWindow(hwnd, nCmdShow);	//Задает режим отображение окна(Развернуто на весь экран,Свернуто в окно, вернуто на пеньль задач)
 	UpdateWindow(hwnd);			// Прорисовывает окно,
 	
 	//3)создание цикла сообщений
@@ -136,7 +140,7 @@ void UpdateWindowTitle(HWND hwnd)
 			//rect.right - rect.left вычисляет ширину окна. rect.bottom - rect.top вычисляет высоту окна.
 			<< "Size: (" << rect.right - rect.left << "x" << rect.bottom - rect.top << ")\"";
 		//SendMessage(hwnd, WM_SETTEXT, 0, (LPARAM)oss.str().c_str());
-		//SetWindowText(hwnd, oss.str().c_str());			// Устанавливаем новый заголовок окна
+		SetWindowText(hwnd, oss.str().c_str());			// Устанавливаем новый заголовок окна
 	}
 }
 INT WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
@@ -145,9 +149,9 @@ INT WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	{
 	case WM_CREATE:										// Сообщение о создании окна
 	case WM_MOVE:										// Сообщение при перемещении окна (после завершения перемещения)
-	case WM_MOVING:										// Сообщение при процессе перемещения окна
+	//case WM_MOVING:										// Сообщение при процессе перемещения окна
 	case WM_SIZE:										// Сообщение при изменении размера окна(после завершения изменения)
-	case WM_SIZING:										// Сообщение при процессе изменения размера окна
+	//case WM_SIZING:										// Сообщение при процессе изменения размера окна
 		UpdateWindowTitle(hwnd);						// Обновляем заголовок окна
 		break;
 

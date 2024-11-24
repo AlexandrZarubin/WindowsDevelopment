@@ -136,6 +136,7 @@
     <ResourceCompile Include="Resource.rc" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="cur\cursor2.cur" />
     <None Include="CUR\Pointer_gauntlet_cast_off.cur" />
   </ItemGroup>
   <ItemGroup>

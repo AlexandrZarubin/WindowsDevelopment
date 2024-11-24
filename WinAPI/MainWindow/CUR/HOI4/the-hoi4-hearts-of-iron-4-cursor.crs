@@ -1,0 +1,30 @@
+﻿[Help]
+Path=HOI4 (Hearts of Iron 4) Help Cursor.ani
+
+[Arrow]
+Path=HOI4 (Hearts of Iron 4) Normal Cursor.cur
+
+[AppStarting]
+Path=HOI4 (Hearts of Iron 4) Working on Background/Busy Cursor.ani
+
+[Crosshair]
+Path=HOI4 (Hearts of Iron 4) Precision Select Cursor.cur
+
+[IBeam]
+Path=HOI4 (Hearts of Iron 4) Text Select Cursor.cur
+
+[NWPen]
+Path=HOI4 (Hearts of Iron 4) Handwriting Cursor.cur
+
+[No]
+Path=HOI4 (Hearts of Iron 4) Unavailable Cursor.cur
+
+[SizeAll]
+Path=HOI4 (Hearts of Iron 4) Move Cursor.ani
+
+[UpArrow]
+Path=HOI4 (Hearts of Iron 4) Alternate Select Cursor.cur
+
+[Hand]
+Path=HOI4 (Hearts of Iron 4) Link Select Cursor.cur
+
