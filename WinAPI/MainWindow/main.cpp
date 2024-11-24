@@ -3,7 +3,9 @@
 #include <sstream>
 #include"resource.h"
 #include<windows.h>
-
+#define IDC_STATIC 1000
+#define IDC_EDIT 1001
+#define IDC_BUTTON 1002
 //названием класса окна
 CONST CHAR g_sz_WINDOW_CLASS[] = "My Main Window";
 
@@ -98,6 +100,7 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		NULL,	//hMenu - для галвного окна это resourceID главного меню, (// Дескриптор меню)
 		//для дочернего окна(Элемента какого-то окна) это resourceID соотвествующего элемента
 		//По этому ResorceID нужный элемент всега можно получить GetDlgItem()
+		//кроме того, этот ResorceID будет прилетать в параметре LOWORD(wParam) при воздеиствий пользователя
 		hInstance,										// Дескриптор экземпляра приложения
 		NULL											// Дополнительные параметры (NULL для главного окна)
 	);
@@ -113,8 +116,13 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	MSG msg;
 	while (GetMessage(&msg, NULL, 0, 0) > 0)
 	{
-		TranslateMessage(&msg);							// Преобразуем сообщения клавиатуры в удобный для обработки вид
-		DispatchMessage(&msg);							// Отправляем сообщение в функцию обработки сообщений
+		if (!IsDialogMessage(hwnd, &msg))
+		{
+			TranslateMessage(&msg);							// Преобразуем сообщения клавиатуры в удобный для обработки вид
+			DispatchMessage(&msg);							// Отправляем сообщение в функцию обработки сообщений
+		}
+		
+		//IsDialogMessage(hwnd, &msg);
 	}
 
 	return msg.wParam;									// Возвращаем код завершения программы
@@ -148,6 +156,48 @@ INT WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	switch (uMsg)
 	{
 	case WM_CREATE:										// Сообщение о создании окна
+	{
+
+		HWND hStatic = CreateWindowEx(
+			NULL,
+			"Static",
+			"Этот статический текст создан функцией CreateWindwosEX()",
+			WS_CHILD | WS_VISIBLE | WS_TABSTOP,
+			10, 10,
+			800, 22,
+			hwnd,
+			(HMENU)1000,
+			GetModuleHandle(NULL),
+			NULL
+
+		);
+
+		HWND hStaticText = CreateWindowEx(
+			NULL,
+			"EDIT",
+			"",
+			WS_CHILD | WS_VISIBLE|WS_BORDER|ES_CENTER | WS_TABSTOP,
+			10, 32,
+			500, 22,
+			hwnd,
+			(HMENU)1001,
+			GetModuleHandle(NULL),
+			NULL
+		);
+		HWND hButton = CreateWindowEx(
+			NULL,
+			"BUTTON",
+			"Применить",
+			WS_CHILD | WS_VISIBLE|BS_PUSHBUTTON|WS_TABSTOP,
+			410, 58,
+			100, 32,
+			hwnd,
+			(HMENU)1002,
+			GetModuleHandle(NULL),
+			NULL
+		);
+	}
+		break;
 	case WM_MOVE:										// Сообщение при перемещении окна (после завершения перемещения)
 	//case WM_MOVING:										// Сообщение при процессе перемещения окна
 	case WM_SIZE:										// Сообщение при изменении размера окна(после завершения изменения)
@@ -156,6 +206,21 @@ INT WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		break;
 
 	case WM_COMMAND:									// Сообщение о взаимодействии с элементами управления
+		switch (LOWORD(wParam))
+		{
+		case IDC_BUTTON:
+		{
+			HWND hStatic = GetDlgItem(hwnd, IDC_STATIC);
+			HWND hEdit = GetDlgItem(hwnd, IDC_EDIT);
+			CONST INT SIZE = 256;
+			CHAR sz_buffer[SIZE]{};
+			SendMessage(hEdit, WM_GETTEXT, SIZE, (LPARAM)sz_buffer);
+			SendMessage(hStatic, WM_SETTEXT, 0, (LPARAM)sz_buffer);
+			SendMessage(hwnd, WM_SETTEXT, 0, (LPARAM)sz_buffer);
+			break;
+		}
+
+		}
 		break;
 	case WM_DESTROY:									// Сообщение о закрытии окна
 		PostQuitMessage(0);								// Завершаем приложение
