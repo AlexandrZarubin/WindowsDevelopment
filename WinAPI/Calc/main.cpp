@@ -1,5 +1,5 @@
-#include<Windows.h>
-
+ï»¿#include<Windows.h>
+#include"resource.h"
 #define IDC_EDIT_DISPLAY 999
 #define IDC_BUTTON_0 1000
 #define IDC_BUTTON_1 1001
@@ -26,9 +26,9 @@
 CONST CHAR g_sz_WINDOW_CLASS[] = "CALC_VPD_311";
 
 
-CONST INT g_i_BUTTON_SIZE = 50;	//Ðàçìåð êíîïêè â ïèêñåëàõ
-CONST INT g_i_INTERVAL = 5;		//Ðàñòîÿíèå ìåæäó êíîïêàìè
-CONST INT g_i_BUTTON_DOUBLE_SIZE = g_i_BUTTON_SIZE*2+ g_i_INTERVAL;	//Ðàçìåð êíîïêè â ïèêñåëàõ
+CONST INT g_i_BUTTON_SIZE = 50;	//Ð Ð°Ð·Ð¼ÐµÑ€ ÐºÐ½Ð¾Ð¿ÐºÐ¸ Ð² Ð¿Ð¸ÐºÑÐµÐ»Ð°Ñ…
+CONST INT g_i_INTERVAL = 5;		//Ð Ð°ÑÑ‚Ð¾ÑÐ½Ð¸Ðµ Ð¼ÐµÐ¶Ð´Ñƒ ÐºÐ½Ð¾Ð¿ÐºÐ°Ð¼Ð¸
+CONST INT g_i_BUTTON_DOUBLE_SIZE = g_i_BUTTON_SIZE*2+ g_i_INTERVAL;	//Ð Ð°Ð·Ð¼ÐµÑ€ ÐºÐ½Ð¾Ð¿ÐºÐ¸ Ð² Ð¿Ð¸ÐºÑÐµÐ»Ð°Ñ…
 #define BUTTON_SHIFT_X(column) g_i_BUTTON_START_X+(g_i_BUTTON_SIZE+g_i_INTERVAL)*(column)
 #define BUTTON_SHIFT_Y(row) g_i_BUTTON_START_Y+(g_i_BUTTON_SIZE+g_i_INTERVAL)*(row)
 
@@ -58,7 +58,7 @@ INT GetTitlVarHeight(HWND hwnd)
 }
 INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst, LPSTR lpCmdLine, INT nCmdShow)
 {
-	//1)Ðåãèñòðàöèÿ êëàññà îêíà
+	//1)Ð ÐµÐ³Ð¸ÑÑ‚Ñ€Ð°Ñ†Ð¸Ñ ÐºÐ»Ð°ÑÑÐ° Ð¾ÐºÐ½Ð°
 	WNDCLASSEX wClass;
 	ZeroMemory(&wClass, sizeof(wClass));
 
@@ -67,8 +67,8 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst, LPSTR lpCmdLine, IN
 	wClass.cbClsExtra = 0;
 	wClass.cbWndExtra = 0;
 
-	wClass.hIcon = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_APPLICATION));
-	wClass.hIconSm = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_APPLICATION));
+	wClass.hIcon = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_ICON1));
+	wClass.hIconSm = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_ICON1));
 	wClass.hCursor = LoadCursor(hInstance, MAKEINTRESOURCE(IDC_ARROW));
 	wClass.hbrBackground = (HBRUSH)COLOR_WINDOW;
 	//wClass.hbrBackground = CreateSolidBrush(RGB(217, 228, 241));
@@ -78,18 +78,18 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst, LPSTR lpCmdLine, IN
 	wClass.lpszClassName = g_sz_WINDOW_CLASS;
 	wClass.lpfnWndProc = (WNDPROC)WndProc;
 
-	//Ðåãèñòðàöèÿ îêíà
+	//Ð ÐµÐ³Ð¸ÑÑ‚Ñ€Ð°Ñ†Ð¸Ñ Ð¾ÐºÐ½Ð°
 	if (!RegisterClassEx(&wClass))
 	{
 		MessageBox(NULL, "Class registration failed", NULL, MB_OK | MB_ICONERROR);
 		return 0;
 	}
-	//2)Ñîçäàíèå îêíà:
+	//2)Ð¡Ð¾Ð·Ð´Ð°Ð½Ð¸Ðµ Ð¾ÐºÐ½Ð°:
 	HWND hwnd = CreateWindowEx(
 		NULL,
 		g_sz_WINDOW_CLASS,
 		g_sz_WINDOW_CLASS,
-		WS_OVERLAPPEDWINDOW ^WS_THICKFRAME ^WS_MAXIMIZEBOX ^ WS_THICKFRAME ^ WS_MAXIMIZEBOX,
+		WS_OVERLAPPEDWINDOW ^WS_THICKFRAME ^WS_MAXIMIZEBOX,
 		CW_USEDEFAULT, CW_USEDEFAULT,
 		g_i_WINDOW_WIDTH+16, g_i_window_HIGHT+39,
 		NULL,
@@ -99,7 +99,7 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst, LPSTR lpCmdLine, IN
 	);
 	ShowWindow(hwnd, nCmdShow);
 	UpdateWindow(hwnd);
-	//3)Çàïóñê öèêëà ñîîáùåíèÿ:
+	//3)Ð—Ð°Ð¿ÑƒÑÐº Ñ†Ð¸ÐºÐ»Ð° ÑÐ¾Ð¾Ð±Ñ‰ÐµÐ½Ð¸Ñ:
 	MSG msg;
 	while (GetMessage(&msg, NULL, 0, 0) > 0)
 	{
