@@ -6,13 +6,14 @@
 #include"resource.h"
 #include"Dimensions.h"
 
-//struct g_calcState {
-//	static DOUBLE a;
-//	static DOUBLE b;
-//	static WORD	operation;
-//	static BOOL input;
-//	static BOOL operation_input;
-//}g_calcstate={DBL_MIN,DBL_MIN,0,false,false};
+struct g_calcState {
+	DOUBLE a;
+	DOUBLE b;
+	WORD   operation;
+	BOOL   input;
+	BOOL   operation_input;
+}g_calcstate={DBL_MIN,DBL_MIN,0,false,false};
+
 CONST CHAR g_sz_WINDOW_CLASS[] = "CALC_VPD_311";
 CONST CHAR* g_OPERATIONS[] = { "+","-","*","/" };
 
@@ -213,7 +214,7 @@ INT CALLBACK  WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			 if (operation_input)
 			 {
 				SendMessage(hEditDisplay, WM_SETTEXT, 0, (LPARAM)"");
-
+				operation_input = false;
 			 }
 			 sz_digit[0] = LOWORD(wParam) - IDC_BUTTON_0 + '0';
 			 SendMessage(hEditDisplay, WM_GETTEXT, SIZE, (LPARAM)sz_display);
@@ -261,7 +262,7 @@ INT CALLBACK  WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			 SendMessage(hEditDisplay, WM_GETTEXT, SIZE, (LPARAM)sz_display);
 			 if (input&&a == DBL_MIN)a = atof(sz_display);
 			 //input = FALSE;
-			 if (operation)SendMessage(hwnd, WM_COMMAND, LOWORD(IDC_BUTTON_EQUAL), 0);
+			 if (operation&&input)SendMessage(hwnd, WM_COMMAND, LOWORD(IDC_BUTTON_EQUAL), 0);
 			 operation = LOWORD(wParam);
 			 operation_input = TRUE;
 		 }
