@@ -1,11 +1,20 @@
 ﻿#define _CRT_SECURE_NO_WARNINGS
+#include<stdio.h>
 #include<Windows.h>
 #include<string.h>
 #include"resource.h"
 #include"Dimensions.h"
 
+
 CONST CHAR g_sz_WINDOW_CLASS[] = "CALC_VPD_311";
 CONST CHAR* g_OPERATIONS[] = { "+","-","*","/" };
+
+struct CalculatorState
+{
+	DOUBLE operand1;
+	DOUBLE operand2;
+	CHAR operation;
+}g_calcState = { 0.0,0.0,'\0' };
 
 INT CALLBACK  WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPrama);
 INT GetTitlVarHeight(HWND hwnd)
@@ -142,7 +151,7 @@ INT CALLBACK  WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				//g_i_BUTTON_START_Y + (g_i_BUTTON_SIZE + g_i_INTERVAL) * (3-i),
 				g_i_BUTTON_SIZE, g_i_BUTTON_SIZE,
 				hwnd,
-				(HMENU)IDC_BUTTON_PLUS+i,
+				(HMENU)(IDC_BUTTON_PLUS+i),
 				GetModuleHandle(NULL),
 				NULL
 			);
@@ -184,11 +193,12 @@ INT CALLBACK  WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		break;
 	case WM_COMMAND:
 	{
+
 		HWND hEditDisplay = GetDlgItem(hwnd, IDC_EDIT_DISPLAY);
 		CONST INT SIZE = 256;
 		CHAR sz_display[SIZE]{};
 		 CHAR sz_digit[2]{};
-		 if (LOWORD(wParam) >= IDC_BUTTON_0 && LOWORD(wParam) <= IDC_BUTTON_9)	// =
+		 if (LOWORD(wParam) >= IDC_BUTTON_0 && LOWORD(wParam) <= IDC_BUTTON_9)	// цифры
 		 {
 			 sz_digit[0] = LOWORD(wParam) - IDC_BUTTON_0 + '0';
 			 SendMessage(hEditDisplay, WM_GETTEXT, SIZE, (LPARAM)sz_display);
@@ -200,7 +210,7 @@ INT CALLBACK  WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			 }
 			 SendMessage(hEditDisplay, WM_SETTEXT, 0, (LPARAM)sz_display);
 		 }
-		 if (LOWORD(wParam) == IDC_BUTTON_POINT)									// .
+		 else if (LOWORD(wParam) == IDC_BUTTON_POINT)									// .
 		 {
 			SendMessage(hEditDisplay, WM_GETTEXT, SIZE, (LPARAM)sz_display);
 			if(strchr(sz_display, '.'))break;
@@ -208,22 +218,60 @@ INT CALLBACK  WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			SendMessage(hEditDisplay, WM_SETTEXT, 0, (LPARAM)sz_display);
 
 		 }
-		 if (LOWORD(wParam) == IDC_BUTTON_BSP)										//<-
+		 else if (LOWORD(wParam) >= IDC_BUTTON_PLUS && LOWORD(wParam) <= IDC_BUTTON_SLASH)
+		 {
+
+			 SendMessage(hEditDisplay, WM_GETTEXT, SIZE, (LPARAM)sz_display);
+			 g_calcState.operand1 = atof(sz_display);
+			 INT operationIndex = LOWORD(wParam) - IDC_BUTTON_PLUS;
+			 if (operationIndex >= 0 && operationIndex < 4)
+			 {
+				 g_calcState.operation = g_OPERATIONS[operationIndex][0];
+			 }
+			 SendMessage(hEditDisplay, WM_SETTEXT, 0, (LPARAM)"0");				// Сбросить отображение
+			 
+		 }
+		 else if (LOWORD(wParam) == IDC_BUTTON_BSP)										//<-
 		 {
 			 SendMessage(hEditDisplay, WM_GETTEXT, SIZE, (LPARAM)sz_display);
-			 if (strlen(sz_display) > 1)sz_display[strlen(sz_display) - 1] = '\0';
+			 if (strlen(sz_display) > 1) sz_display[strlen(sz_display) - 1] = '\0';
 			 else
-			 {
-				 sz_display[0] = '0';
-				 sz_display[1] = '\0';
-			 }
+				 strcpy(sz_display, "0");
 			 SendMessage(hEditDisplay, WM_SETTEXT, 0, (LPARAM)sz_display);
 		 }
-		 if (LOWORD(wParam) == IDC_BUTTON_CLR)										//cclr
+		 else if (LOWORD(wParam) == IDC_BUTTON_CLR)										//cclr
 		 {
-			 SendMessage(hEditDisplay, WM_SETTEXT, 0, (LPARAM)"0");
+			 SendMessage(hEditDisplay, WM_SETTEXT, 0, (LPARAM)"0");	
+			 g_calcState = { 0.0, 0.0, '\0'};
 		 }
-		 
+		 else if (LOWORD(wParam) == IDC_BUTTON_EQUAL)
+		 {
+			 SendMessage(hEditDisplay, WM_GETTEXT, SIZE, (LPARAM)sz_display);
+			 g_calcState.operand2 = atof(sz_display);
+			 DOUBLE result{ 0.0 };
+			 switch (g_calcState.operation)
+			 {
+			 case'+':
+				 result = g_calcState.operand1 + g_calcState.operand2;
+				 break;
+			 case'-':
+				 result = g_calcState.operand1 - g_calcState.operand2;
+				 break;
+			 case'*':
+				 result = g_calcState.operand1 * g_calcState.operand2;
+				 break;
+			 case'/':
+				 if (g_calcState.operand2 != 0)
+					 result = g_calcState.operand1 / g_calcState.operand2;
+				 else
+					 MessageBox(hwnd, "Division by zero!", "Error", MB_OK | MB_ICONERROR);
+				 break;
+			 default:
+				 break;
+			 }
+			 sprintf(sz_display, "%g", result);
+			 SendMessage(hEditDisplay, WM_SETTEXT, 0, (LPARAM)sz_display);
+		 }
 	}
 		break;
 	case WM_DESTROY:
