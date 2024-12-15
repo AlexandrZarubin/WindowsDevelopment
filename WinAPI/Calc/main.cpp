@@ -28,6 +28,9 @@ INT GetTitlVarHeight(HWND hwnd)
 	int title_bar_height = (window_rect.bottom - window_rect.top) - (client_rect.bottom - client_rect.top);
 	return title_bar_height;
 }
+
+VOID SetSkin(HWND hwnd, CONST CHAR skin[]);
+HFONT SetCustomFont(HWND hwnd, CONST CHAR* fontName, INT fontSize, INT fonwWeight, BOOL addFontFromFile, CONST CHAR* fontPath);
 INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst, LPSTR lpCmdLine, INT nCmdShow)
 {
 	//1)Регистрация класса окна
@@ -89,6 +92,16 @@ INT CALLBACK  WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	{
 	case WM_CREATE:
 	{
+		CONST CHAR* customFontPatch = "FONT\\Digital-7.ttf";
+		HFONT hFont = SetCustomFont
+		(
+			hwnd,
+			"Digital-7",
+			24,
+			FW_BOLD,
+			TRUE,
+			customFontPatch
+		);
 		HWND hEdit = CreateWindowEx(
 			NULL, "Edit", "0",
 			WS_CHILD | WS_VISIBLE | WS_BORDER|ES_RIGHT,
@@ -99,6 +112,8 @@ INT CALLBACK  WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			GetModuleHandle(NULL),
 			NULL
 		);
+		SendMessage(hEdit, WM_SETFONT, (WPARAM)hFont, TRUE);
+
 		CHAR sz_digit[2] = {};
 		for (int i = 6; i >= 0; i -= 3)
 		{
@@ -108,7 +123,7 @@ INT CALLBACK  WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				CreateWindowEx
 				(
 					NULL, "Button", sz_digit,
-					WS_CHILD | WS_VISIBLE,
+					WS_CHILD | WS_VISIBLE | BS_BITMAP,
 					BUTTON_SHIFT_X(j), BUTTON_SHIFT_Y(2 - i / 3),
 					//g_i_BUTTON_START_X + (g_i_BUTTON_SIZE + g_i_INTERVAL) * j,
 					//g_i_BUTTON_START_Y + (g_i_BUTTON_SIZE + g_i_INTERVAL) * (2-i/3),
@@ -120,10 +135,10 @@ INT CALLBACK  WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				);
 			}
 		}
-		CreateWindowEx
+		HWND hButton_0=CreateWindowEx
 		(
 			NULL, "Button", "0",
-			WS_CHILD | WS_VISIBLE,
+			WS_CHILD | WS_VISIBLE|BS_BITMAP,
 			BUTTON_SHIFT_X(0), BUTTON_SHIFT_Y(3),
 			//g_i_BUTTON_START_X ,
 			//g_i_BUTTON_START_Y + (g_i_BUTTON_SIZE + g_i_INTERVAL) * 3,
@@ -133,10 +148,15 @@ INT CALLBACK  WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			GetModuleHandle(NULL),
 			NULL
 		);
+		//HBITMAP bmpButton_0=
+		//(HBITMAP) LoadImage(NULL, "ImageBMP\\ZERO.bmp", IMAGE_BITMAP, g_i_BUTTON_DOUBLE_SIZE, g_i_BUTTON_SIZE,LR_LOADFROMFILE);
+
+		//SendMessage(hButton_0, BM_SETIMAGE, IMAGE_BITMAP, (LPARAM)bmpButton_0);
+
 		CreateWindowEx
 		(
 			NULL, "Button", ".",
-			WS_CHILD | WS_VISIBLE,
+			WS_CHILD | WS_VISIBLE | BS_BITMAP,
 			BUTTON_SHIFT_X(2), BUTTON_SHIFT_Y(3),
 			//g_i_BUTTON_START_X+(g_i_BUTTON_SIZE+g_i_INTERVAL)*2,
 			//g_i_BUTTON_START_Y + (g_i_BUTTON_SIZE + g_i_INTERVAL) * 3,
@@ -151,7 +171,7 @@ INT CALLBACK  WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			CreateWindowEx
 			(
 				NULL, "Button", g_OPERATIONS[i],
-				WS_CHILD | WS_VISIBLE,
+				WS_CHILD | WS_VISIBLE| BS_BITMAP,
 				BUTTON_SHIFT_X(3),BUTTON_SHIFT_Y(3-i),
 				//g_i_BUTTON_START_Y + (g_i_BUTTON_SIZE + g_i_INTERVAL) * (3-i),
 				g_i_BUTTON_SIZE, g_i_BUTTON_SIZE,
@@ -164,7 +184,7 @@ INT CALLBACK  WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		CreateWindowEx
 		(
 			NULL, "Button", "<-",
-			WS_CHILD | WS_VISIBLE,
+			WS_CHILD | WS_VISIBLE | BS_BITMAP,
 			BUTTON_SHIFT_X(4),BUTTON_SHIFT_Y(0),
 			g_i_BUTTON_SIZE, g_i_BUTTON_SIZE,
 			hwnd,
@@ -175,7 +195,7 @@ INT CALLBACK  WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		CreateWindowEx
 		(
 			NULL, "Button", "C",
-			WS_CHILD | WS_VISIBLE,
+			WS_CHILD | WS_VISIBLE | BS_BITMAP,
 			BUTTON_SHIFT_X(4), BUTTON_SHIFT_Y(1),
 			g_i_BUTTON_SIZE, g_i_BUTTON_SIZE,
 			hwnd,
@@ -186,7 +206,7 @@ INT CALLBACK  WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		CreateWindowEx
 		(
 			NULL, "Button", "=",
-			WS_CHILD | WS_VISIBLE,
+			WS_CHILD | WS_VISIBLE | BS_BITMAP,
 			BUTTON_SHIFT_X(4), BUTTON_SHIFT_Y(2),
 			g_i_BUTTON_SIZE, g_i_BUTTON_DOUBLE_SIZE,
 			hwnd,
@@ -194,7 +214,52 @@ INT CALLBACK  WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			GetModuleHandle(NULL),
 			NULL
 		);
+		SetSkin(hwnd, "square_blue");
 	}
+		break;
+		case WM_CONTEXTMENU:
+		{
+			HMENU hMainMenu{ CreatePopupMenu() };
+			HMENU hSubMenuSkins{ CreatePopupMenu() };
+			HMENU hSubMenuFonts{ CreatePopupMenu() };
+			AppendMenu(hMainMenu, MF_STRING | MF_POPUP, (UINT_PTR)hSubMenuSkins, "Skins");
+			AppendMenu(hSubMenuSkins, MF_STRING, CM_SQUARE_BLUE, "Square Blue");
+			AppendMenu(hSubMenuSkins, MF_STRING, CM_METAL_MISTRAL, "metal_mistral");
+
+			AppendMenu(hMainMenu, MF_STRING | MF_POPUP, (UINT_PTR)hSubMenuFonts, "Fonts");
+			AppendMenu(hSubMenuFonts, MF_STRING, CM_FONT_DIGITAL7, "Digital-7");
+			AppendMenu(hSubMenuFonts, MF_STRING, CM_FONT_ARIAL, "Arial");
+
+			POINT pt;
+			if (GetCursorPos(&pt))
+			{
+				INT command = TrackPopupMenuEx(hMainMenu, TPM_BOTTOMALIGN | TPM_LEFTALIGN | TPM_RETURNCMD, pt.x, pt.y, hwnd, NULL);
+				switch (command)
+				{
+				case CM_SQUARE_BLUE:
+					SetSkin(hwnd, "square_blue");
+					break;
+				case CM_METAL_MISTRAL:
+					SetSkin(hwnd, "metal_mistral");
+					break;
+				case CM_FONT_DIGITAL7:
+				{
+					HFONT hFont = SetCustomFont(hwnd, "Digital-7", 24, FW_BOLD, TRUE, "FONT\\Digital-7.ttf");
+					HWND hEdit = GetDlgItem(hwnd, IDC_EDIT_DISPLAY);
+					SendMessage(hEdit, WM_SETFONT, (WPARAM)hFont, TRUE);
+				}
+				break;
+				case CM_FONT_ARIAL:
+				{
+					HFONT hFont = SetCustomFont(hwnd, "Arial", 24, FW_NORMAL, FALSE,NULL);
+					HWND hEdit = GetDlgItem(hwnd, IDC_EDIT_DISPLAY);
+					SendMessage(hEdit, WM_SETFONT, (WPARAM)hFont, TRUE);
+				}
+				}
+			}
+			else
+				MessageBox(NULL, "Failed to get cursor position.", "Error", MB_OK | MB_ICONERROR);
+		}
 		break;
 	case WM_COMMAND:
 	{
@@ -300,10 +365,16 @@ INT CALLBACK  WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		case VK_OEM_PERIOD:case VK_DECIMAL: SendMessage(hwnd, WM_COMMAND, LOWORD(IDC_BUTTON_POINT), 0); break;
 		case VK_BACK: SendMessage(hwnd, WM_COMMAND, LOWORD(IDC_BUTTON_BSP), 0); break;
 		case VK_ESCAPE:SendMessage(hwnd, WM_COMMAND, LOWORD(IDC_BUTTON_CLR), 0); break;
+
+		case VK_MULTIPLY:SendMessage(hwnd, WM_COMMAND, LOWORD(IDC_BUTTON_ASTER), 0); break;
+		case VK_OEM_PLUS:SendMessage(hwnd, WM_COMMAND, LOWORD(IDC_BUTTON_PLUS), 0); break;
+		case VK_OEM_MINUS:SendMessage(hwnd, WM_COMMAND, LOWORD(IDC_BUTTON_MINUS), 0); break;
+		case VK_DIVIDE:SendMessage(hwnd, WM_COMMAND, LOWORD(IDC_BUTTON_SLASH), 0); break;
 		}
 	}
 		break;
 	case WM_DESTROY:
+		 RemoveFontResourceEx("FONT\\Digital7.ttf", FR_PRIVATE, NULL);
 		PostQuitMessage(0);
 		break;
 	case WM_CLOSE:
@@ -311,4 +382,158 @@ INT CALLBACK  WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		break;
 	default:return DefWindowProc(hwnd, uMsg, wParam, lParam);
 	}
+}
+VOID SetSkin(HWND hwnd, CONST CHAR skin[])
+{
+	CHAR sz_file[MAX_PATH]{};
+	HANDLE hImage = NULL;
+
+	for (int i = IDC_BUTTON_0; i <= IDC_BUTTON_9; ++i)
+	{
+		HWND hButton = GetDlgItem(hwnd, i);
+		INT buttonWidth;
+		if(i==IDC_BUTTON_0) buttonWidth = g_i_BUTTON_DOUBLE_SIZE;
+		else				buttonWidth = g_i_BUTTON_SIZE;
+		sprintf(sz_file, "ImageBMP\\%s\\button_%i.bmp", skin, i - IDC_BUTTON_0);
+		hImage = LoadImage
+		(
+			GetModuleHandle(NULL),
+			sz_file,
+			IMAGE_BITMAP,
+			buttonWidth,
+			g_i_BUTTON_SIZE,
+			LR_LOADFROMFILE
+		);
+		if (hImage && hButton)
+		{
+			SendMessage(hButton, BM_SETIMAGE, IMAGE_BITMAP, (LPARAM)hImage);
+		}
+		else
+		{
+			sprintf(sz_file, "Failed to load image: %s", sz_file);
+			MessageBox(hwnd, sz_file, "Error", MB_OK | MB_ICONERROR);
+		}
+	}
+	for (int i = IDC_BUTTON_PLUS; i <= IDC_BUTTON_SLASH; ++i)
+	{
+		HWND hButton = GetDlgItem(hwnd, i);
+		CONST CHAR* operationName = NULL;
+		switch (i)
+		{
+		case IDC_BUTTON_PLUS: operationName = "plus"; break;
+		case IDC_BUTTON_MINUS: operationName = "minus"; break;
+		case IDC_BUTTON_ASTER: operationName = "aster"; break;
+		case IDC_BUTTON_SLASH: operationName = "slash"; break;
+		}
+		if (operationName)
+		{
+			sprintf(sz_file, "ImageBMP\\%s\\button_%s.bmp", skin, operationName);
+			hImage = LoadImage
+			(
+				GetModuleHandle(NULL),
+				sz_file,
+				IMAGE_BITMAP,
+				g_i_BUTTON_SIZE,
+				g_i_BUTTON_SIZE,
+				LR_LOADFROMFILE
+			);
+			if (hImage && hButton)
+			{
+				SendMessage(hButton, BM_SETIMAGE, IMAGE_BITMAP, (LPARAM)hImage);
+			}
+			else
+			{
+				sprintf(sz_file, "Failed to load image: %s", sz_file);
+				MessageBox(hwnd, sz_file, "Error", MB_OK | MB_ICONERROR);
+			}
+
+		}
+	}
+	struct
+	{
+		WORD id;
+		CONST CHAR* name;
+		INT width;
+	}
+	specialButtons[]=
+	{
+		{IDC_BUTTON_EQUAL,	"equal", g_i_BUTTON_DOUBLE_SIZE},
+		{IDC_BUTTON_CLR,	"clr", g_i_BUTTON_SIZE},
+		{IDC_BUTTON_BSP,	"bsp",	 g_i_BUTTON_SIZE }
+	};
+	for (int i = 0; i < sizeof(specialButtons) / sizeof(specialButtons[0]); ++i)
+	{
+		HWND hButton= GetDlgItem(hwnd, specialButtons[i].id);
+		sprintf(sz_file, "ImageBMP\\%s\\button_%s.bmp", skin, specialButtons[i].name);
+		hImage = LoadImage
+		(
+			GetModuleHandle(NULL),
+			sz_file,
+			IMAGE_BITMAP,
+			g_i_BUTTON_SIZE,
+			specialButtons[i].width,
+			LR_LOADFROMFILE
+		);
+		if (hImage && hButton)
+		{
+			SendMessage(hButton, BM_SETIMAGE, IMAGE_BITMAP, (LPARAM)hImage);
+		}
+		else
+		{
+			sprintf(sz_file, "Failed to load image: %s", sz_file);
+			MessageBox(hwnd, sz_file, "Error", MB_OK | MB_ICONERROR);
+		}
+	}
+	HWND hButton = GetDlgItem(hwnd, IDC_BUTTON_POINT);
+	sprintf(sz_file, "ImageBMP\\%s\\button_point.bmp", skin);
+	HBITMAP bmpButton_point=
+		(HBITMAP) LoadImage
+		(
+			GetModuleHandle(NULL),
+			sz_file,
+			IMAGE_BITMAP,
+			g_i_BUTTON_SIZE,
+			g_i_BUTTON_SIZE,
+			LR_LOADFROMFILE);
+		if (bmpButton_point)
+		SendMessage(hButton, BM_SETIMAGE, IMAGE_BITMAP, (LPARAM)bmpButton_point);
+		else
+		{
+			sprintf(sz_file, "Failed to load image: %s", sz_file);
+			MessageBox(hwnd, sz_file, "Error", MB_OK | MB_ICONERROR);
+		}
+}
+HFONT SetCustomFont(HWND hwnd, CONST CHAR* fontName, INT fontSize, INT fontWeight, BOOL addFontFromFile, CONST CHAR* fontPath = NULL)
+{
+	if (addFontFromFile && fontPath)
+	{
+		if (AddFontResourceEx(fontPath, FR_PRIVATE, NULL) == 0)
+		{
+			MessageBox(hwnd, "Failed to add font from file.", "Error", MB_OK | MB_ICONERROR);
+			return (HFONT)GetStockObject(DEFAULT_GUI_FONT);
+		}
+	}
+	HFONT hFont = CreateFont
+	(
+		fontSize,              // Высота шрифта
+		0,                     // Ширина шрифта (авто)
+		0,                     // Угол наклона текста (в 0.1 градусах)
+		0,                     // Угол наклона шрифта
+		fontWeight,            // Вес шрифта (FW_BOLD, FW_NORMAL и т.д.)
+		FALSE,                 // Курсив
+		FALSE,                 // Подчёркивание
+		FALSE,                 // Зачёркивание
+		DEFAULT_CHARSET,       // Набор символов
+		OUT_DEFAULT_PRECIS,    // Точность вывода
+		CLIP_DEFAULT_PRECIS,   // Точность отсечения
+		DEFAULT_QUALITY,       // Качество шрифта
+		DEFAULT_PITCH | FF_SWISS, // Тип шрифта
+		fontName               // Имя шрифта
+	);
+	if (!hFont)
+	{
+		MessageBox(hwnd, "Failed to create font.", "Error", MB_OK | MB_ICONERROR);
+		return (HFONT)GetStockObject(DEFAULT_GUI_FONT);
+	}
+	return hFont;
 }

@@ -27,6 +27,11 @@
 #define IDC_BUTTON_CLR		1016	//	Clear
 #define IDC_BUTTON_EQUAL	1017	//	'='
 
+#define CM_SQUARE_BLUE 2000
+#define CM_METAL_MISTRAL 2001
+
+#define CM_FONT_DIGITAL7 2010
+#define CM_FONT_ARIAL 2011
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
