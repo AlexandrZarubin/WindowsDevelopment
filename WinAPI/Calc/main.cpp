@@ -92,8 +92,8 @@ INT CALLBACK  WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	{
 	case WM_CREATE:
 	{
-		CONST CHAR* customFontPatch = "FONT\\Digital-7.ttf";
-		HFONT hFont = SetCustomFont
+		//CONST CHAR* customFontPatch = "FONT\\Digital-7.ttf";
+		/*HFONT hFont = SetCustomFont
 		(
 			hwnd,
 			"Digital-7",
@@ -101,7 +101,7 @@ INT CALLBACK  WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			FW_BOLD,
 			TRUE,
 			customFontPatch
-		);
+		);*/
 		HWND hEdit = CreateWindowEx(
 			NULL, "Edit", "0",
 			WS_CHILD | WS_VISIBLE | WS_BORDER|ES_RIGHT,
@@ -112,7 +112,7 @@ INT CALLBACK  WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			GetModuleHandle(NULL),
 			NULL
 		);
-		SendMessage(hEdit, WM_SETFONT, (WPARAM)hFont, TRUE);
+		/*SendMessage(hEdit, WM_SETFONT, (WPARAM)hFont, TRUE);*/
 
 		CHAR sz_digit[2] = {};
 		for (int i = 6; i >= 0; i -= 3)
@@ -214,10 +214,12 @@ INT CALLBACK  WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			GetModuleHandle(NULL),
 			NULL
 		);
-		SetSkin(hwnd, "square_blue");
+		//SetSkin(hwnd, "square_blue");
+		SetSkin(hwnd, "metal_mistral");
 	}
 		break;
-		case WM_CONTEXTMENU:
+		/////////
+		/*case WM_CONTEXTMENU:
 		{
 			HMENU hMainMenu{ CreatePopupMenu() };
 			HMENU hSubMenuSkins{ CreatePopupMenu() };
@@ -260,6 +262,7 @@ INT CALLBACK  WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			else
 				MessageBox(NULL, "Failed to get cursor position.", "Error", MB_OK | MB_ICONERROR);
 		}
+		*/
 		break;
 	case WM_COMMAND:
 	{
@@ -356,23 +359,116 @@ INT CALLBACK  WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		break;
 	case WM_KEYDOWN:
 	{
-		if (wParam >= '0' && wParam <= '9')
+		if (GetKeyState(VK_SHIFT) < 0 && wParam == 0x38)
+		{
+			SendMessage(GetDlgItem(hwnd, IDC_BUTTON_ASTER), BM_SETSTATE, TRUE, 0);
+		}
+		else if (wParam >= '0' && wParam <= '9')
+		{
 			SendMessage(hwnd, WM_COMMAND, LOWORD(wParam - '0' + IDC_BUTTON_0), 0);
-		if (wParam >= 0x60 && wParam <= 0x69)
-			SendMessage(hwnd, WM_COMMAND, LOWORD(wParam - 0x60 + IDC_BUTTON_0), 0);
+			SendMessage(GetDlgItem(hwnd, wParam - '0' + IDC_BUTTON_0), BM_SETSTATE, TRUE, 0);
+		}
+		else if (wParam >= 0x60 && wParam <= 0x69)
+			//SendMessage(hwnd, WM_COMMAND, LOWORD(wParam - 0x60 + IDC_BUTTON_0), 0);
+			SendMessage(GetDlgItem(hwnd, wParam-0x60 + IDC_BUTTON_0), BM_SETSTATE, TRUE, 0);
 		switch (wParam)
 		{
-		case VK_OEM_PERIOD:case VK_DECIMAL: SendMessage(hwnd, WM_COMMAND, LOWORD(IDC_BUTTON_POINT), 0); break;
-		case VK_BACK: SendMessage(hwnd, WM_COMMAND, LOWORD(IDC_BUTTON_BSP), 0); break;
-		case VK_ESCAPE:SendMessage(hwnd, WM_COMMAND, LOWORD(IDC_BUTTON_CLR), 0); break;
+		case VK_OEM_PERIOD:case VK_DECIMAL: 
+			//SendMessage(hwnd, WM_COMMAND, LOWORD(IDC_BUTTON_POINT), 0); 
+			SendMessage(GetDlgItem(hwnd, IDC_BUTTON_POINT), BM_SETSTATE, TRUE, 0);
+			break;
+		case VK_BACK: 
+			//SendMessage(hwnd, WM_COMMAND, LOWORD(IDC_BUTTON_BSP), 0); 
+			SendMessage(GetDlgItem(hwnd, IDC_BUTTON_BSP), BM_SETSTATE, TRUE, 0);
+			break;
+		case VK_ESCAPE:
+			//SendMessage(hwnd, WM_COMMAND, LOWORD(IDC_BUTTON_CLR), 0);
+			SendMessage(GetDlgItem(hwnd, IDC_BUTTON_CLR), BM_SETSTATE, TRUE, 0);
+			break;
 
-		case VK_MULTIPLY:SendMessage(hwnd, WM_COMMAND, LOWORD(IDC_BUTTON_ASTER), 0); break;
-		case VK_OEM_PLUS:SendMessage(hwnd, WM_COMMAND, LOWORD(IDC_BUTTON_PLUS), 0); break;
-		case VK_OEM_MINUS:SendMessage(hwnd, WM_COMMAND, LOWORD(IDC_BUTTON_MINUS), 0); break;
-		case VK_DIVIDE:SendMessage(hwnd, WM_COMMAND, LOWORD(IDC_BUTTON_SLASH), 0); break;
+		case VK_MULTIPLY:
+			//SendMessage(hwnd, WM_COMMAND, LOWORD(IDC_BUTTON_ASTER), 0); 
+			SendMessage(GetDlgItem(hwnd, IDC_BUTTON_ASTER), BM_SETSTATE, TRUE, 0);
+
+			break;
+		case VK_OEM_PLUS:case VK_ADD:		
+			//SendMessage(hwnd, WM_COMMAND, LOWORD(IDC_BUTTON_PLUS), 0); 
+			SendMessage(GetDlgItem(hwnd, IDC_BUTTON_PLUS), BM_SETSTATE, TRUE, 0);
+			break;
+		case VK_OEM_MINUS:case VK_SUBTRACT: 
+			//SendMessage(hwnd, WM_COMMAND, LOWORD(IDC_BUTTON_MINUS), 0); 
+			SendMessage(GetDlgItem(hwnd, IDC_BUTTON_MINUS), BM_SETSTATE, TRUE, 0);
+			break;
+		case VK_DIVIDE:case VK_OEM_2:
+			//SendMessage(hwnd, WM_COMMAND, LOWORD(IDC_BUTTON_SLASH), 0);
+			SendMessage(GetDlgItem(hwnd, IDC_BUTTON_SLASH), BM_SETSTATE, TRUE, 0);
+			break;
+		case VK_RETURN:
+			//SendMessage(hwnd, WM_COMMAND, LOWORD(IDC_BUTTON_EQUAL), 0);
+			SendMessage(GetDlgItem(hwnd, IDC_BUTTON_EQUAL), BM_SETSTATE, TRUE, 0);
+			break;
 		}
-	}
 		break;
+	}
+	case WM_KEYUP:
+	{
+		if (GetKeyState(VK_SHIFT) < 0 && wParam == 0x38)
+		{
+			SendMessage(hwnd, WM_COMMAND, IDC_BUTTON_ASTER, 0);
+			SendMessage(GetDlgItem(hwnd, IDC_BUTTON_ASTER), BM_SETSTATE, FALSE, 0);
+		}
+		else if (wParam >= '0' && wParam <= '9')
+		{
+			SendMessage(hwnd, WM_COMMAND, LOWORD(wParam - '0' + IDC_BUTTON_0), 0);
+			SendMessage(GetDlgItem(hwnd, wParam - '0' + IDC_BUTTON_0), BM_SETSTATE, FALSE, 0);
+		}
+		else if (wParam >= 0x60 && wParam <= 0x69)
+		{
+			SendMessage(hwnd, WM_COMMAND, LOWORD(wParam - 0x60 + IDC_BUTTON_0), 0);
+			SendMessage(GetDlgItem(hwnd, wParam - 0x60 + IDC_BUTTON_0), BM_SETSTATE, FALSE, 0);
+		}
+		switch (wParam)
+		{
+		case VK_OEM_PERIOD:case VK_DECIMAL:
+			SendMessage(hwnd, WM_COMMAND, LOWORD(IDC_BUTTON_POINT), 0);
+			SendMessage(GetDlgItem(hwnd, IDC_BUTTON_POINT), BM_SETSTATE, FALSE, 0);
+			break;
+		case VK_BACK:
+			SendMessage(hwnd, WM_COMMAND, LOWORD(IDC_BUTTON_BSP), 0);
+			SendMessage(GetDlgItem(hwnd, IDC_BUTTON_BSP), BM_SETSTATE, FALSE, 0);
+			
+			break;
+		case VK_ESCAPE:
+			SendMessage(hwnd, WM_COMMAND, LOWORD(IDC_BUTTON_CLR), 0);
+			SendMessage(GetDlgItem(hwnd, IDC_BUTTON_CLR), BM_SETSTATE, FALSE, 0);
+			break;
+
+		case VK_MULTIPLY:
+			SendMessage(hwnd, WM_COMMAND, LOWORD(IDC_BUTTON_ASTER), 0);
+			SendMessage(GetDlgItem(hwnd, IDC_BUTTON_ASTER), BM_SETSTATE, FALSE, 0);
+
+			break;
+		case VK_OEM_PLUS:case VK_ADD:
+			SendMessage(hwnd, WM_COMMAND, LOWORD(IDC_BUTTON_PLUS), 0);
+			SendMessage(GetDlgItem(hwnd, IDC_BUTTON_PLUS), BM_SETSTATE, FALSE, 0);
+			break;
+		case VK_OEM_MINUS:case VK_SUBTRACT:
+			SendMessage(hwnd, WM_COMMAND, LOWORD(IDC_BUTTON_MINUS), 0);
+			SendMessage(GetDlgItem(hwnd, IDC_BUTTON_MINUS), BM_SETSTATE, FALSE, 0);
+			break;
+		case VK_DIVIDE:case VK_OEM_2:
+			SendMessage(hwnd, WM_COMMAND, LOWORD(IDC_BUTTON_SLASH), 0);
+			SendMessage(GetDlgItem(hwnd, IDC_BUTTON_SLASH), BM_SETSTATE, FALSE, 0);
+			break;
+		case VK_RETURN:
+			SendMessage(hwnd, WM_COMMAND, LOWORD(IDC_BUTTON_EQUAL), 0);
+			SendMessage(GetDlgItem(hwnd, IDC_BUTTON_EQUAL), BM_SETSTATE, FALSE, 0);
+			break;
+		}
+		
+	}
+	break;
+	
 	case WM_DESTROY:
 		 RemoveFontResourceEx("FONT\\Digital7.ttf", FR_PRIVATE, NULL);
 		PostQuitMessage(0);
@@ -383,6 +479,47 @@ INT CALLBACK  WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	default:return DefWindowProc(hwnd, uMsg, wParam, lParam);
 	}
 }
+CONST CHAR* g_BUTTONS[]{
+	"button_0.bmp",
+	"button_1.bmp",
+	"button_2.bmp",
+	"button_3.bmp",
+	"button_4.bmp",
+	"button_5.bmp",
+	"button_6.bmp",
+	"button_7.bmp",
+	"button_8.bmp",
+	"button_9.bmp",
+	"button_point.bmp",
+	"button_plus.bmp",
+	"button_minus.bmp",
+	"button_aster.bmp",
+	"button_slash.bmp",
+	"button_bsp.bmp",
+	"button_clr.bmp",
+	"button_equal.bmp",
+};
+VOID SetSkin(HWND hwnd, CONST CHAR skin[])
+{
+	CHAR sz_filename[MAX_PATH]{};
+	for (int i = IDC_BUTTON_0; i <= IDC_BUTTON_EQUAL; ++i)
+	{
+		HWND hButton{ GetDlgItem(hwnd,i) };
+		sprintf(sz_filename, "ImageBMP\\%s\\%s", skin, g_BUTTONS[i-IDC_BUTTON_0]);
+		HBITMAP bmpButton
+		{ (HBITMAP)LoadImage
+		(	NULL,
+			sz_filename,
+			IMAGE_BITMAP,
+			i == IDC_BUTTON_0 ? g_i_BUTTON_DOUBLE_SIZE : g_i_BUTTON_SIZE,
+			i == IDC_BUTTON_EQUAL ? g_i_BUTTON_DOUBLE_SIZE : g_i_BUTTON_SIZE,
+			LR_LOADFROMFILE
+			) 
+		};
+		SendMessage(hButton, BM_SETIMAGE, IMAGE_BITMAP, (LPARAM)bmpButton);
+	}
+}
+/*
 VOID SetSkin(HWND hwnd, CONST CHAR skin[])
 {
 	CHAR sz_file[MAX_PATH]{};
@@ -503,6 +640,7 @@ VOID SetSkin(HWND hwnd, CONST CHAR skin[])
 			MessageBox(hwnd, sz_file, "Error", MB_OK | MB_ICONERROR);
 		}
 }
+*/
 HFONT SetCustomFont(HWND hwnd, CONST CHAR* fontName, INT fontSize, INT fontWeight, BOOL addFontFromFile, CONST CHAR* fontPath = NULL)
 {
 	if (addFontFromFile && fontPath)
