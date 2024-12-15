@@ -4,6 +4,10 @@
 //
 #define IDI_ICON1                       101
 
+#define IDR_SQUARE_BLUE 201
+#define IDR_METAL_MISTRAL 202
+
+#define IDR_EXIT 299
 
 #define IDC_EDIT_DISPLAY 999
 #define IDC_BUTTON_0 1000
@@ -26,9 +30,6 @@
 #define IDC_BUTTON_BSP		1015	//	Backspace
 #define IDC_BUTTON_CLR		1016	//	Clear
 #define IDC_BUTTON_EQUAL	1017	//	'='
-
-#define CM_SQUARE_BLUE 2000
-#define CM_METAL_MISTRAL 2001
 
 #define CM_FONT_DIGITAL7 2010
 #define CM_FONT_ARIAL 2011

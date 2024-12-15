@@ -218,52 +218,6 @@ INT CALLBACK  WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		SetSkin(hwnd, "metal_mistral");
 	}
 		break;
-		/////////
-		/*case WM_CONTEXTMENU:
-		{
-			HMENU hMainMenu{ CreatePopupMenu() };
-			HMENU hSubMenuSkins{ CreatePopupMenu() };
-			HMENU hSubMenuFonts{ CreatePopupMenu() };
-			AppendMenu(hMainMenu, MF_STRING | MF_POPUP, (UINT_PTR)hSubMenuSkins, "Skins");
-			AppendMenu(hSubMenuSkins, MF_STRING, CM_SQUARE_BLUE, "Square Blue");
-			AppendMenu(hSubMenuSkins, MF_STRING, CM_METAL_MISTRAL, "metal_mistral");
-
-			AppendMenu(hMainMenu, MF_STRING | MF_POPUP, (UINT_PTR)hSubMenuFonts, "Fonts");
-			AppendMenu(hSubMenuFonts, MF_STRING, CM_FONT_DIGITAL7, "Digital-7");
-			AppendMenu(hSubMenuFonts, MF_STRING, CM_FONT_ARIAL, "Arial");
-
-			POINT pt;
-			if (GetCursorPos(&pt))
-			{
-				INT command = TrackPopupMenuEx(hMainMenu, TPM_BOTTOMALIGN | TPM_LEFTALIGN | TPM_RETURNCMD, pt.x, pt.y, hwnd, NULL);
-				switch (command)
-				{
-				case CM_SQUARE_BLUE:
-					SetSkin(hwnd, "square_blue");
-					break;
-				case CM_METAL_MISTRAL:
-					SetSkin(hwnd, "metal_mistral");
-					break;
-				case CM_FONT_DIGITAL7:
-				{
-					HFONT hFont = SetCustomFont(hwnd, "Digital-7", 24, FW_BOLD, TRUE, "FONT\\Digital-7.ttf");
-					HWND hEdit = GetDlgItem(hwnd, IDC_EDIT_DISPLAY);
-					SendMessage(hEdit, WM_SETFONT, (WPARAM)hFont, TRUE);
-				}
-				break;
-				case CM_FONT_ARIAL:
-				{
-					HFONT hFont = SetCustomFont(hwnd, "Arial", 24, FW_NORMAL, FALSE,NULL);
-					HWND hEdit = GetDlgItem(hwnd, IDC_EDIT_DISPLAY);
-					SendMessage(hEdit, WM_SETFONT, (WPARAM)hFont, TRUE);
-				}
-				}
-			}
-			else
-				MessageBox(NULL, "Failed to get cursor position.", "Error", MB_OK | MB_ICONERROR);
-		}
-		*/
-		break;
 	case WM_COMMAND:
 	{
 		static DOUBLE a { DBL_MIN};
@@ -365,12 +319,14 @@ INT CALLBACK  WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		}
 		else if (wParam >= '0' && wParam <= '9')
 		{
-			SendMessage(hwnd, WM_COMMAND, LOWORD(wParam - '0' + IDC_BUTTON_0), 0);
+			//SendMessage(hwnd, WM_COMMAND, LOWORD(wParam - '0' + IDC_BUTTON_0), 0);
 			SendMessage(GetDlgItem(hwnd, wParam - '0' + IDC_BUTTON_0), BM_SETSTATE, TRUE, 0);
 		}
 		else if (wParam >= 0x60 && wParam <= 0x69)
+		{
 			//SendMessage(hwnd, WM_COMMAND, LOWORD(wParam - 0x60 + IDC_BUTTON_0), 0);
 			SendMessage(GetDlgItem(hwnd, wParam-0x60 + IDC_BUTTON_0), BM_SETSTATE, TRUE, 0);
+		}
 		switch (wParam)
 		{
 		case VK_OEM_PERIOD:case VK_DECIMAL: 
@@ -468,7 +424,76 @@ INT CALLBACK  WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		
 	}
 	break;
-	
+		/////////
+		/*case WM_CONTEXTMENU:
+		{
+			HMENU hMainMenu{ CreatePopupMenu() };
+			HMENU hSubMenuSkins{ CreatePopupMenu() };
+			HMENU hSubMenuFonts{ CreatePopupMenu() };
+			AppendMenu(hMainMenu, MF_STRING | MF_POPUP, (UINT_PTR)hSubMenuSkins, "Skins");
+			AppendMenu(hSubMenuSkins, MF_STRING, CM_SQUARE_BLUE, "Square Blue");
+			AppendMenu(hSubMenuSkins, MF_STRING, CM_METAL_MISTRAL, "metal_mistral");
+
+			AppendMenu(hMainMenu, MF_STRING | MF_POPUP, (UINT_PTR)hSubMenuFonts, "Fonts");
+			AppendMenu(hSubMenuFonts, MF_STRING, CM_FONT_DIGITAL7, "Digital-7");
+			AppendMenu(hSubMenuFonts, MF_STRING, CM_FONT_ARIAL, "Arial");
+
+			POINT pt;
+			if (GetCursorPos(&pt))
+			{
+				INT command = TrackPopupMenuEx(hMainMenu, TPM_BOTTOMALIGN | TPM_LEFTALIGN | TPM_RETURNCMD, pt.x, pt.y, hwnd, NULL);
+				switch (command)
+				{
+				case CM_SQUARE_BLUE:
+					SetSkin(hwnd, "square_blue");
+					break;
+				case CM_METAL_MISTRAL:
+					SetSkin(hwnd, "metal_mistral");
+					break;
+				case CM_FONT_DIGITAL7:
+				{
+					HFONT hFont = SetCustomFont(hwnd, "Digital-7", 24, FW_BOLD, TRUE, "FONT\\Digital-7.ttf");
+					HWND hEdit = GetDlgItem(hwnd, IDC_EDIT_DISPLAY);
+					SendMessage(hEdit, WM_SETFONT, (WPARAM)hFont, TRUE);
+				}
+				break;
+				case CM_FONT_ARIAL:
+				{
+					HFONT hFont = SetCustomFont(hwnd, "Arial", 24, FW_NORMAL, FALSE,NULL);
+					HWND hEdit = GetDlgItem(hwnd, IDC_EDIT_DISPLAY);
+					SendMessage(hEdit, WM_SETFONT, (WPARAM)hFont, TRUE);
+				}
+				}
+			}
+			else
+				MessageBox(NULL, "Failed to get cursor position.", "Error", MB_OK | MB_ICONERROR);
+		}
+		break;
+		*/
+	case WM_CONTEXTMENU:
+	{
+
+		//1) Создаем всплывающее меню
+		HMENU hMenu{ CreatePopupMenu() };
+		//2) Добавляем пункты в созданий меню
+		InsertMenu(hMenu, 0, MF_BYPOSITION | MF_STRING, IDR_EXIT, "Exit");
+		InsertMenu(hMenu, 0, MF_BYPOSITION | MF_SEPARATOR, 0, NULL);
+
+		InsertMenu(hMenu, 0, MF_BYPOSITION | MF_STRING, IDR_METAL_MISTRAL, "Meatal mistral");
+		InsertMenu(hMenu, 0, MF_BYPOSITION | MF_STRING, IDR_SQUARE_BLUE, "Square blue");
+		//3) Использование контекстного меню
+		//INT command{ TrackPopupMenu(hMenu,NULL,0,0,0,hwnd,NULL) };
+		//switch (command)
+		
+		switch (TrackPopupMenu(hMenu, TPM_RETURNCMD|TPM_RIGHTALIGN | TPM_BOTTOMALIGN, LOWORD(lParam), HIWORD(lParam), 0, hwnd, NULL))
+		{
+		case IDR_SQUARE_BLUE:SetSkin(hwnd, "square_blue"); break;
+		case IDR_METAL_MISTRAL:SetSkin(hwnd, "metal_mistral"); break;
+		case IDR_EXIT: SendMessage(hwnd, WM_CLOSE, 0, 0); break;
+		}
+		DestroyMenu(hMenu);
+	}
+		break;
 	case WM_DESTROY:
 		 RemoveFontResourceEx("FONT\\Digital7.ttf", FR_PRIVATE, NULL);
 		PostQuitMessage(0);
