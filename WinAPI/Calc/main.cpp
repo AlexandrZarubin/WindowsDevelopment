@@ -5,6 +5,7 @@
 #include<string.h>
 #include"resource.h"
 #include"Dimensions.h"
+#include"Skins.h"
 
 struct g_calcState {
 	DOUBLE a;
@@ -86,7 +87,7 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst, LPSTR lpCmdLine, IN
 INT CALLBACK  WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	
-
+	static INT index{};
 
 	switch (uMsg)
 	{
@@ -112,6 +113,7 @@ INT CALLBACK  WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			GetModuleHandle(NULL),
 			NULL
 		);
+		//AddFontResource("Fonts\\digital-7.ttf");
 		/*SendMessage(hEdit, WM_SETFONT, (WPARAM)hFont, TRUE);*/
 
 		CHAR sz_digit[2] = {};
@@ -152,7 +154,25 @@ INT CALLBACK  WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		//(HBITMAP) LoadImage(NULL, "ImageBMP\\ZERO.bmp", IMAGE_BITMAP, g_i_BUTTON_DOUBLE_SIZE, g_i_BUTTON_SIZE,LR_LOADFROMFILE);
 
 		//SendMessage(hButton_0, BM_SETIMAGE, IMAGE_BITMAP, (LPARAM)bmpButton_0);
-
+		AddFontResource("FONT\\digital-7.ttf");
+		HFONT hFont = CreateFont
+		(
+			g_i_FONT_HEIGHT,			// Высота шрифта
+			g_i_FONT_WIDTH,				// Ширина шрифта (авто)
+			0,							// Угол наклона текста (в 0.1 градусах)
+			0,							// Угол наклона шрифта
+			FW_MEDIUM,					// Вес шрифта (FW_BOLD, FW_NORMAL и т.д.)
+			FALSE,						// Курсив
+			FALSE,						// Подчёркивание
+			FALSE,						// Зачёркивание
+			ANSI_CHARSET,				// Набор символов
+			OUT_DEFAULT_PRECIS,			// Точность вывода
+			CLIP_CHARACTER_PRECIS,		// Точность отсечения
+			ANTIALIASED_QUALITY,		// Качество шрифта
+			FF_DONTCARE,	// Тип шрифта
+			"Digital-7"			// Имя шрифта
+		);
+		SendMessage(hEdit, WM_SETFONT,(WPARAM)hFont,TRUE);
 		CreateWindowEx
 		(
 			NULL, "Button", ".",
@@ -214,9 +234,27 @@ INT CALLBACK  WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			GetModuleHandle(NULL),
 			NULL
 		);
-		//SetSkin(hwnd, "square_blue");
-		SetSkin(hwnd, "metal_mistral");
+		SetSkin(hwnd, "square_blue");
+		//SetSkin(hwnd, "metal_mistral");
 	}
+		break;
+		case WM_CTLCOLOREDIT:
+		{
+			HDC hdcEdit{ (HDC)wParam };
+			//SetBkMode(hdcEdit, OPAQUE);
+			SetBkColor(hdcEdit, g_DISPLAY_BACKGROUND_COLOR[index]);
+			SetTextColor(hdcEdit, g_DISPLAY_FOREGROUND_COLOR[index]);
+			
+			HBRUSH hbrBackground{ CreateSolidBrush(g_WINDOW_BACKGROUND_COLOR[index])};
+			
+			SetClassLongPtr(hwnd, GCLP_HBRBACKGROUND, (LONG)hbrBackground);
+			SendMessage(hwnd, WM_ERASEBKGND, wParam, 0);
+
+			//UpdateWindow(hwnd);
+			RedrawWindow(hwnd, NULL, NULL,RDW_ERASE);
+			//SetSkin(hwnd, g_SKIN[index]);
+			return (LRESULT)hbrBackground;
+		}
 		break;
 	case WM_COMMAND:
 	{
@@ -479,18 +517,28 @@ INT CALLBACK  WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		InsertMenu(hMenu, 0, MF_BYPOSITION | MF_STRING, IDR_EXIT, "Exit");
 		InsertMenu(hMenu, 0, MF_BYPOSITION | MF_SEPARATOR, 0, NULL);
 
-		InsertMenu(hMenu, 0, MF_BYPOSITION | MF_STRING, IDR_METAL_MISTRAL, "Meatal mistral");
-		InsertMenu(hMenu, 0, MF_BYPOSITION | MF_STRING, IDR_SQUARE_BLUE, "Square blue");
+		InsertMenu(hMenu, 0, MF_BYPOSITION | MF_STRING|MF_UNCHECKED, IDR_METAL_MISTRAL, "Meatal mistral");
+		InsertMenu(hMenu, 0, MF_BYPOSITION | MF_STRING|MF_UNCHECKED, IDR_SQUARE_BLUE, "Square blue");
+		CheckMenuItem(hMenu, index, MF_BYPOSITION | MF_CHECKED);
 		//3) Использование контекстного меню
-		//INT command{ TrackPopupMenu(hMenu,NULL,0,0,0,hwnd,NULL) };
-		//switch (command)
 		
-		switch (TrackPopupMenu(hMenu, TPM_RETURNCMD|TPM_RIGHTALIGN | TPM_BOTTOMALIGN, LOWORD(lParam), HIWORD(lParam), 0, hwnd, NULL))
+		DWORD item = TrackPopupMenu(hMenu, TPM_RETURNCMD | TPM_RIGHTALIGN | TPM_BOTTOMALIGN, LOWORD(lParam), HIWORD(lParam), 0, hwnd, NULL);
+		switch (item)
 		{
-		case IDR_SQUARE_BLUE:SetSkin(hwnd, "square_blue"); break;
-		case IDR_METAL_MISTRAL:SetSkin(hwnd, "metal_mistral"); break;
+		case IDR_SQUARE_BLUE:	//SetSkin(hwnd, "square_blue"); break;
+		case IDR_METAL_MISTRAL:	//SetSkin(hwnd, "metal_mistral"); break;
+			index = item - IDR_SQUARE_BLUE;
+			break;
 		case IDR_EXIT: SendMessage(hwnd, WM_CLOSE, 0, 0); break;
 		}
+		HWND hEditDisplay = GetDlgItem(hwnd,IDC_EDIT_DISPLAY);
+		HDC hdcDisplay = GetDC(hEditDisplay);
+		SendMessage(hwnd, WM_CTLCOLOREDIT, (WPARAM)hdcDisplay,0);
+		ReleaseDC(hEditDisplay, hdcDisplay);
+		SetSkin(hwnd, g_SKIN[index]);
+		SetFocus(hEditDisplay);
+
+		//4)Удаляем меню
 		DestroyMenu(hMenu);
 	}
 		break;
@@ -539,7 +587,7 @@ VOID SetSkin(HWND hwnd, CONST CHAR skin[])
 			i == IDC_BUTTON_0 ? g_i_BUTTON_DOUBLE_SIZE : g_i_BUTTON_SIZE,
 			i == IDC_BUTTON_EQUAL ? g_i_BUTTON_DOUBLE_SIZE : g_i_BUTTON_SIZE,
 			LR_LOADFROMFILE
-			) 
+		) 
 		};
 		SendMessage(hButton, BM_SETIMAGE, IMAGE_BITMAP, (LPARAM)bmpButton);
 	}
