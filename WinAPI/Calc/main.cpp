@@ -31,6 +31,7 @@ INT GetTitlVarHeight(HWND hwnd)
 }
 
 VOID SetSkin(HWND hwnd, CONST CHAR skin[]);
+VOID SetSkinFromDLL(HWND hwnd, HINSTANCE hDllInstance);
 HFONT SetCustomFont(HWND hwnd, CONST CHAR* fontName, INT fontSize, INT fonwWeight, BOOL addFontFromFile, CONST CHAR* fontPath);
 INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst, LPSTR lpCmdLine, INT nCmdShow)
 {
@@ -88,11 +89,19 @@ INT CALLBACK  WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	
 	static INT index{};
+	static HINSTANCE hResInstance = NULL; // Дескриптор ресурсной DLL
 
 	switch (uMsg)
 	{
 	case WM_CREATE:
 	{
+		hResInstance = LoadLibrary("SkinSquareBlue.dll");
+		if (!hResInstance)
+		{
+			MessageBox(hwnd, "Failed to load resource DLL.", "Error", MB_OK | MB_ICONERROR);
+			PostQuitMessage(0);
+			break;
+		}
 		//CONST CHAR* customFontPatch = "FONT\\Digital-7.ttf";
 		/*HFONT hFont = SetCustomFont
 		(
@@ -234,8 +243,10 @@ INT CALLBACK  WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			GetModuleHandle(NULL),
 			NULL
 		);
-		SetSkin(hwnd, "square_blue");
+		//SetSkin(hwnd, "square_blue");
 		//SetSkin(hwnd, "metal_mistral");
+		HINSTANCE hSquareBlueDll = LoadLibrary("SkinSquareBlue.dll");
+		SetSkinFromDLL(hwnd, hSquareBlueDll);
 	}
 		break;
 		case WM_CTLCOLOREDIT:
@@ -510,25 +521,90 @@ INT CALLBACK  WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		*/
 	case WM_CONTEXTMENU:
 	{
-
+		static int fontIndex = 0;
+		static HINSTANCE hSquareBlueDll = NULL;
+		static HINSTANCE hMetalMistralDll = NULL;
 		//1) Создаем всплывающее меню
 		HMENU hMenu{ CreatePopupMenu() };
+		HMENU hSkins{ CreatePopupMenu() };
+		HMENU hFontMenu{ CreatePopupMenu() };
 		//2) Добавляем пункты в созданий меню
 		InsertMenu(hMenu, 0, MF_BYPOSITION | MF_STRING, IDR_EXIT, "Exit");
 		InsertMenu(hMenu, 0, MF_BYPOSITION | MF_SEPARATOR, 0, NULL);
 
-		InsertMenu(hMenu, 0, MF_BYPOSITION | MF_STRING|MF_UNCHECKED, IDR_METAL_MISTRAL, "Meatal mistral");
-		InsertMenu(hMenu, 0, MF_BYPOSITION | MF_STRING|MF_UNCHECKED, IDR_SQUARE_BLUE, "Square blue");
-		CheckMenuItem(hMenu, index, MF_BYPOSITION | MF_CHECKED);
+		InsertMenu(hMenu, 0, MF_BYPOSITION | MF_POPUP, (UINT_PTR)hSkins, "Skins");
+		InsertMenu(hSkins, 0, MF_BYPOSITION | MF_STRING| (index == 1 ? MF_CHECKED : MF_UNCHECKED), IDR_METAL_MISTRAL, "Meatal mistral");
+		InsertMenu(hSkins, 0, MF_BYPOSITION | MF_STRING| (index == 0 ? MF_CHECKED : MF_UNCHECKED), IDR_SQUARE_BLUE, "Square blue");
+
+
+		InsertMenu(hMenu, 0, MF_BYPOSITION | MF_POPUP, (UINT_PTR)hFontMenu, "Fonts");
+		InsertMenu(hFontMenu, 0, MF_BYPOSITION | MF_STRING| (fontIndex == 0 ? MF_CHECKED : MF_UNCHECKED), IDR_FONT_DIGITAL7, "Digital-7");
+		InsertMenu(hFontMenu, 0, MF_BYPOSITION | MF_STRING | (fontIndex == 1 ? MF_CHECKED : MF_UNCHECKED), IDR_FONT_ARIAL, "Arial");
+
+		//CheckMenuItem(hMenu, index, MF_BYPOSITION | MF_CHECKED);
 		//3) Использование контекстного меню
 		
 		DWORD item = TrackPopupMenu(hMenu, TPM_RETURNCMD | TPM_RIGHTALIGN | TPM_BOTTOMALIGN, LOWORD(lParam), HIWORD(lParam), 0, hwnd, NULL);
 		switch (item)
 		{
 		case IDR_SQUARE_BLUE:	//SetSkin(hwnd, "square_blue"); break;
-		case IDR_METAL_MISTRAL:	//SetSkin(hwnd, "metal_mistral"); break;
-			index = item - IDR_SQUARE_BLUE;
+		{
+			if (hMetalMistralDll)
+			{
+				FreeLibrary(hMetalMistralDll);
+				hMetalMistralDll = NULL;
+			}
+			if (!hSquareBlueDll)
+			{
+				hSquareBlueDll = LoadLibrary("SkinSquareBlue.dll");
+				if (!hSquareBlueDll)
+				{
+					MessageBox(hwnd, "Failed to load square_blue.dll", "Error", MB_OK | MB_ICONERROR);
+					break;
+				}
+			}
+			index = 0;
+			SetSkinFromDLL(hwnd, hSquareBlueDll);
 			break;
+		}
+		case IDR_METAL_MISTRAL:	//SetSkin(hwnd, "metal_mistral"); break;
+		{
+			if (hSquareBlueDll)
+			{
+				FreeLibrary(hSquareBlueDll);
+				hSquareBlueDll = NULL;
+			}
+			if (!hMetalMistralDll)
+			{
+				hMetalMistralDll = LoadLibrary("SkinMetalMistral.dll");
+				if (!hMetalMistralDll)
+				{
+					MessageBox(hwnd, "Failed to load metal_mistral.dll", "Error", MB_OK | MB_ICONERROR);
+					break;
+				}
+			}
+			index = 1;
+			SetSkinFromDLL(hwnd, hMetalMistralDll);
+			break;
+		}
+			//index = item - IDR_SQUARE_BLUE;
+
+		case IDR_FONT_DIGITAL7:
+		{
+			fontIndex = 0;
+			HFONT hFont = SetCustomFont(hwnd, "Digital-7", 44, FW_BOLD, TRUE, "FONT\\Digital-7.ttf");
+			HWND hEdit = GetDlgItem(hwnd, IDC_EDIT_DISPLAY);
+			SendMessage(hEdit, WM_SETFONT, (WPARAM)hFont, TRUE);
+			break;
+		}
+		case IDR_FONT_ARIAL:
+		{
+			fontIndex = 1;
+			HFONT hFont = SetCustomFont(hwnd, "Arial", 44, FW_NORMAL, FALSE, NULL);
+			HWND hEdit = GetDlgItem(hwnd, IDC_EDIT_DISPLAY);
+			SendMessage(hEdit, WM_SETFONT, (WPARAM)hFont, TRUE);
+			break;
+		}
 		case IDR_EXIT: SendMessage(hwnd, WM_CLOSE, 0, 0); break;
 		}
 		HWND hEditDisplay = GetDlgItem(hwnd,IDC_EDIT_DISPLAY);
@@ -543,6 +619,10 @@ INT CALLBACK  WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	}
 		break;
 	case WM_DESTROY:
+		if (hResInstance)
+		{
+			FreeLibrary(hResInstance);
+		}
 		 RemoveFontResourceEx("FONT\\Digital7.ttf", FR_PRIVATE, NULL);
 		PostQuitMessage(0);
 		break;
@@ -552,6 +632,51 @@ INT CALLBACK  WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	default:return DefWindowProc(hwnd, uMsg, wParam, lParam);
 	}
 }
+
+VOID SetSkinFromDLL(HWND hwnd, HINSTANCE hDllInstance)
+{
+	if (!hDllInstance)
+	{
+		MessageBox(hwnd, "Invalid DLL instance.", "Error", MB_OK | MB_ICONERROR);
+		return;
+	}
+
+	// Проходим по кнопкам и устанавливаем изображения
+	for (int i = IDC_BUTTON_0; i <= IDC_BUTTON_EQUAL; i++) 
+	{
+		HWND hButton = GetDlgItem(hwnd, i);
+		if (!hButton) 
+		{
+			continue;
+		}
+		// Загрузка изображения из DLL
+		HBITMAP hImage = 
+			(HBITMAP)LoadImage
+		(
+			hDllInstance,
+			MAKEINTRESOURCE(i), // ID ресурса в DLL
+			IMAGE_BITMAP,
+			i == IDC_BUTTON_0 ? g_i_BUTTON_DOUBLE_SIZE : g_i_BUTTON_SIZE,
+			i == IDC_BUTTON_EQUAL ? g_i_BUTTON_DOUBLE_SIZE : g_i_BUTTON_SIZE,
+			LR_SHARED
+		);
+
+		if (!hImage) 
+
+		{
+			DWORD error = GetLastError();
+			CHAR errorMessage[256];
+			sprintf(errorMessage, "Failed to load resource ID: %d. Error: %lu", i, error);
+			MessageBox(hwnd, errorMessage, "Error", MB_OK | MB_ICONERROR);
+			//MessageBox(hwnd, "Failed to load image", "Error", MB_OK | MB_ICONERROR);
+			continue;
+		}
+
+		// Устанавливаем изображение на кнопку
+		SendMessage(hButton, BM_SETIMAGE, (WPARAM)IMAGE_BITMAP, (LPARAM)hImage);
+	}
+}
+
 CONST CHAR* g_BUTTONS[]{
 	"button_0.bmp",
 	"button_1.bmp",
