@@ -31,6 +31,7 @@ INT GetTitlVarHeight(HWND hwnd)
 }
 
 VOID SetSkin(HWND hwnd, CONST CHAR skin[]);
+VOID SetSkinFromDLL(HWND hwnd, CONST CHAR skiin[]);
 HFONT SetCustomFont(HWND hwnd, CONST CHAR* fontName, INT fontSize, INT fonwWeight, BOOL addFontFromFile, CONST CHAR* fontPath);
 INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst, LPSTR lpCmdLine, INT nCmdShow)
 {
@@ -236,6 +237,7 @@ INT CALLBACK  WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		);
 		SetSkin(hwnd, "square_blue");
 		//SetSkin(hwnd, "metal_mistral");
+		SetSkinFromDLL(hwnd, "square_blue.dll");
 	}
 		break;
 		case WM_CTLCOLOREDIT:
@@ -535,7 +537,7 @@ INT CALLBACK  WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		HDC hdcDisplay = GetDC(hEditDisplay);
 		SendMessage(hwnd, WM_CTLCOLOREDIT, (WPARAM)hdcDisplay,0);
 		ReleaseDC(hEditDisplay, hdcDisplay);
-		SetSkin(hwnd, g_SKIN[index]);
+		SetSkinFromDLL(hwnd, g_SKIN[index]);
 		SetFocus(hEditDisplay);
 
 		//4)Удаляем меню
@@ -572,6 +574,26 @@ CONST CHAR* g_BUTTONS[]{
 	"button_clr.bmp",
 	"button_equal.bmp",
 };
+VOID SetSkinFromDLL(HWND hwnd, CONST CHAR skin[])
+{
+	HINSTANCE hButtons = LoadLibrary(skin);
+	CHAR sz_file[MAX_PATH]{};
+	for (int i = IDC_BUTTON_0; i <= IDC_BUTTON_EQUAL; i++)
+	{
+		HWND hButton = GetDlgItem(hwnd, i);
+		HBITMAP hImage = (HBITMAP)LoadImage
+		(
+			hButtons,
+			MAKEINTRESOURCE(i),
+			IMAGE_BITMAP,
+			i == IDC_BUTTON_0 ? g_i_BUTTON_DOUBLE_SIZE : g_i_BUTTON_SIZE,
+			i == IDC_BUTTON_EQUAL ? g_i_BUTTON_DOUBLE_SIZE : g_i_BUTTON_SIZE,
+			LR_SHARED
+		);
+		SendMessage(hButton, BM_SETIMAGE, (WPARAM)IMAGE_BITMAP, (LPARAM)hImage);
+	}
+	FreeLibrary(hButtons);
+}
 VOID SetSkin(HWND hwnd, CONST CHAR skin[])
 {
 	CHAR sz_filename[MAX_PATH]{};
