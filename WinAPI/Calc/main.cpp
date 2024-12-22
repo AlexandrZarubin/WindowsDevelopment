@@ -6,6 +6,7 @@
 #include"resource.h"
 #include"Dimensions.h"
 #include"Skins.h"
+#include"Fonts.h"
 
 struct g_calcState {
 	DOUBLE a;
@@ -32,7 +33,11 @@ INT GetTitlVarHeight(HWND hwnd)
 
 VOID SetSkin(HWND hwnd, CONST CHAR skin[]);
 VOID SetSkinFromDLL(HWND hwnd, CONST CHAR skiin[]);
-HFONT SetCustomFont(HWND hwnd, CONST CHAR* fontName, INT fontSize, INT fonwWeight, BOOL addFontFromFile, CONST CHAR* fontPath);
+
+VOID LoadFontFromDLL(HMODULE hFontModule,INT resourceID);
+
+VOID LoadFontsFromDLL(HMODULE hFontsModule);
+
 INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst, LPSTR lpCmdLine, INT nCmdShow)
 {
 	//1)Регистрация класса окна
@@ -159,12 +164,13 @@ INT CALLBACK  WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		//SendMessage(hButton_0, BM_SETIMAGE, IMAGE_BITMAP, (LPARAM)bmpButton_0);
 		/*AddFontResource("FONT\\digital-7.ttf");*/
 		hFontsModule = LoadLibrary("Font.dll");
-		HRSRC hFntRes = FindResource(hFontsModule, MAKEINTRESOURCE(2002), MAKEINTRESOURCE(RT_FONT));
+		/*HRSRC hFntRes = FindResource(hFontsModule, MAKEINTRESOURCE(2003), MAKEINTRESOURCE(RT_FONT));
 		HGLOBAL hFntMem = LoadResource(hFontsModule, hFntRes);
 		VOID* fntData = LockResource(hFntMem);
 		DWORD nFonts = 0;
 		DWORD len = SizeofResource(hFontsModule, hFntRes);
-		AddFontMemResourceEx(fntData, len, NULL, &nFonts);
+		AddFontMemResourceEx(fntData, len, NULL, &nFonts);*/
+		LoadFontsFromDLL(hFontsModule);
 		HFONT hFont = CreateFont
 		(
 			g_i_FONT_HEIGHT,			// Высота шрифта
@@ -180,7 +186,7 @@ INT CALLBACK  WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			CLIP_CHARACTER_PRECIS,		// Точность отсечения
 			ANTIALIASED_QUALITY,		// Качество шрифта
 			FF_DONTCARE,	// Тип шрифта
-			"Terminator TWO"			// Имя шрифта
+			g_FONT_NAMES[1]			// Имя шрифта
 		);
 		SendMessage(hEdit, WM_SETFONT,(WPARAM)hFont,TRUE);
 
@@ -525,13 +531,21 @@ INT CALLBACK  WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 		//1) Создаем всплывающее меню
 		HMENU hMenu{ CreatePopupMenu() };
+		HMENU hMenuSkins{ CreatePopupMenu() };
+		HMENU hMenuFonts{ CreatePopupMenu() };
 		//2) Добавляем пункты в созданий меню
 		InsertMenu(hMenu, 0, MF_BYPOSITION | MF_STRING, IDR_EXIT, "Exit");
 		InsertMenu(hMenu, 0, MF_BYPOSITION | MF_SEPARATOR, 0, NULL);
+		InsertMenu(hMenu, 0, MF_BYPOSITION | MF_POPUP, (UINT_PTR)hMenuFonts, "Fonts");
+		InsertMenu(hMenu, 0, MF_BYPOSITION | MF_POPUP, (UINT_PTR)hMenuSkins, "Skins");
 
-		InsertMenu(hMenu, 0, MF_BYPOSITION | MF_STRING|MF_UNCHECKED, IDR_METAL_MISTRAL, "Meatal mistral");
-		InsertMenu(hMenu, 0, MF_BYPOSITION | MF_STRING|MF_UNCHECKED, IDR_SQUARE_BLUE, "Square blue");
-		CheckMenuItem(hMenu, index, MF_BYPOSITION | MF_CHECKED);
+		InsertMenu(hMenuSkins, 0, MF_BYPOSITION | MF_STRING|MF_UNCHECKED, IDR_METAL_MISTRAL, "Meatal mistral");
+		InsertMenu(hMenuSkins, 0, MF_BYPOSITION | MF_STRING|MF_UNCHECKED, IDR_SQUARE_BLUE, "Square blue");
+
+		InsertMenu(hMenuFonts, 0, MF_BYPOSITION | MF_STRING|MF_UNCHECKED, IDR_MOSCOW_2024, "Moscow 2024");
+		InsertMenu(hMenuFonts, 0, MF_BYPOSITION | MF_STRING|MF_UNCHECKED, IDR_TERMINATOR, "Terminator Two");
+		InsertMenu(hMenuFonts, 0, MF_BYPOSITION | MF_STRING|MF_UNCHECKED, IDR_DIGITAL_7, "Digital-7");
+		CheckMenuItem(hMenuSkins, index, MF_BYPOSITION | MF_CHECKED);
 		//3) Использование контекстного меню
 		
 		DWORD item = TrackPopupMenu(hMenu, TPM_RETURNCMD | TPM_RIGHTALIGN | TPM_BOTTOMALIGN, LOWORD(lParam), HIWORD(lParam), 0, hwnd, NULL);
@@ -552,6 +566,8 @@ INT CALLBACK  WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 		//4)Удаляем меню
 		DestroyMenu(hMenu);
+		DestroyMenu(hMenuSkins);
+		DestroyMenu(hMenuFonts);
 	}
 		break;
 	case WM_DESTROY:
@@ -747,37 +763,21 @@ VOID SetSkin(HWND hwnd, CONST CHAR skin[])
 		}
 }
 */
-HFONT SetCustomFont(HWND hwnd, CONST CHAR* fontName, INT fontSize, INT fontWeight, BOOL addFontFromFile, CONST CHAR* fontPath = NULL)
+VOID LoadFontFromDLL(HMODULE hFontModule, INT resourceID)
 {
-	if (addFontFromFile && fontPath)
+	HRSRC hFntRes = FindResource(hFontModule, MAKEINTRESOURCE(resourceID), MAKEINTRESOURCE(RT_FONT));
+	HGLOBAL hFntMem = LoadResource(hFontModule, hFntRes);
+	VOID* fntData = LockResource(hFntMem);
+	DWORD nFonts = 0;
+	DWORD len = SizeofResource(hFontModule, hFntRes);
+	AddFontMemResourceEx(fntData, len, NULL, &nFonts);
+
+}
+
+VOID LoadFontsFromDLL(HMODULE hFontsModule)
+{
+	for (int i = 2001; i <= 2003; ++i)
 	{
-		if (AddFontResourceEx(fontPath, FR_PRIVATE, NULL) == 0)
-		{
-			MessageBox(hwnd, "Failed to add font from file.", "Error", MB_OK | MB_ICONERROR);
-			return (HFONT)GetStockObject(DEFAULT_GUI_FONT);
-		}
+		LoadFontFromDLL(hFontsModule,i);
 	}
-	HFONT hFont = CreateFont
-	(
-		fontSize,              // Высота шрифта
-		0,                     // Ширина шрифта (авто)
-		0,                     // Угол наклона текста (в 0.1 градусах)
-		0,                     // Угол наклона шрифта
-		fontWeight,            // Вес шрифта (FW_BOLD, FW_NORMAL и т.д.)
-		FALSE,                 // Курсив
-		FALSE,                 // Подчёркивание
-		FALSE,                 // Зачёркивание
-		DEFAULT_CHARSET,       // Набор символов
-		OUT_DEFAULT_PRECIS,    // Точность вывода
-		CLIP_DEFAULT_PRECIS,   // Точность отсечения
-		DEFAULT_QUALITY,       // Качество шрифта
-		DEFAULT_PITCH | FF_SWISS, // Тип шрифта
-		fontName               // Имя шрифта
-	);
-	if (!hFont)
-	{
-		MessageBox(hwnd, "Failed to create font.", "Error", MB_OK | MB_ICONERROR);
-		return (HFONT)GetStockObject(DEFAULT_GUI_FONT);
-	}
-	return hFont;
 }
