@@ -89,6 +89,8 @@ INT CALLBACK  WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	
 	static INT index{};
+	static HMODULE hFontsModule = NULL;
+
 
 	switch (uMsg)
 	{
@@ -155,7 +157,14 @@ INT CALLBACK  WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		//(HBITMAP) LoadImage(NULL, "ImageBMP\\ZERO.bmp", IMAGE_BITMAP, g_i_BUTTON_DOUBLE_SIZE, g_i_BUTTON_SIZE,LR_LOADFROMFILE);
 
 		//SendMessage(hButton_0, BM_SETIMAGE, IMAGE_BITMAP, (LPARAM)bmpButton_0);
-		AddFontResource("FONT\\digital-7.ttf");
+		/*AddFontResource("FONT\\digital-7.ttf");*/
+		hFontsModule = LoadLibrary("Font.dll");
+		HRSRC hFntRes = FindResource(hFontsModule, MAKEINTRESOURCE(2002), MAKEINTRESOURCE(RT_FONT));
+		HGLOBAL hFntMem = LoadResource(hFontsModule, hFntRes);
+		VOID* fntData = LockResource(hFntMem);
+		DWORD nFonts = 0;
+		DWORD len = SizeofResource(hFontsModule, hFntRes);
+		AddFontMemResourceEx(fntData, len, NULL, &nFonts);
 		HFONT hFont = CreateFont
 		(
 			g_i_FONT_HEIGHT,			// Высота шрифта
@@ -171,9 +180,10 @@ INT CALLBACK  WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			CLIP_CHARACTER_PRECIS,		// Точность отсечения
 			ANTIALIASED_QUALITY,		// Качество шрифта
 			FF_DONTCARE,	// Тип шрифта
-			"Digital-7"			// Имя шрифта
+			"Terminator TWO"			// Имя шрифта
 		);
 		SendMessage(hEdit, WM_SETFONT,(WPARAM)hFont,TRUE);
+
 		CreateWindowEx
 		(
 			NULL, "Button", ".",
@@ -545,8 +555,9 @@ INT CALLBACK  WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	}
 		break;
 	case WM_DESTROY:
-		 RemoveFontResourceEx("FONT\\Digital7.ttf", FR_PRIVATE, NULL);
+		 //RemoveFontResourceEx("FONT\\Digital7.ttf", FR_PRIVATE, NULL);
 		PostQuitMessage(0);
+		FreeLibrary(hFontsModule);
 		break;
 	case WM_CLOSE:
 		DestroyWindow(hwnd);
