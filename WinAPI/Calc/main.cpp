@@ -37,7 +37,7 @@ VOID SetSkinFromDLL(HWND hwnd, CONST CHAR skiin[]);
 VOID LoadFontFromDLL(HMODULE hFontModule,INT resourceID);
 
 VOID LoadFontsFromDLL(HMODULE hFontsModule);
-
+VOID ChangeFont(HWND hwnd, LPCSTR fontName);
 INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst, LPSTR lpCmdLine, INT nCmdShow)
 {
 	//1)Регистрация класса окна
@@ -555,6 +555,16 @@ INT CALLBACK  WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		case IDR_METAL_MISTRAL:	//SetSkin(hwnd, "metal_mistral"); break;
 			index = item - IDR_SQUARE_BLUE;
 			break;
+		case IDR_DIGITAL_7:
+			ChangeFont(hwnd, g_FONT_NAMES[0]);
+			break;
+		case IDR_MOSCOW_2024:
+			ChangeFont(hwnd, g_FONT_NAMES[1]);
+			break;
+		case IDR_TERMINATOR:
+			ChangeFont(hwnd, g_FONT_NAMES[2]);
+			break;
+
 		case IDR_EXIT: SendMessage(hwnd, WM_CLOSE, 0, 0); break;
 		}
 		HWND hEditDisplay = GetDlgItem(hwnd,IDC_EDIT_DISPLAY);
@@ -780,4 +790,27 @@ VOID LoadFontsFromDLL(HMODULE hFontsModule)
 	{
 		LoadFontFromDLL(hFontsModule,i);
 	}
+}
+
+VOID ChangeFont(HWND hwnd, LPCSTR fontName)
+{
+	HFONT hFont = CreateFont
+	(
+		g_i_FONT_HEIGHT,			// Высота шрифта
+		g_i_FONT_WIDTH,				// Ширина шрифта (авто)
+		0,							// Угол наклона текста (в 0.1 градусах)
+		0,							// Угол наклона шрифта
+		FW_MEDIUM,					// Вес шрифта (FW_BOLD, FW_NORMAL и т.д.)
+		FALSE,						// Курсив
+		FALSE,						// Подчёркивание
+		FALSE,						// Зачёркивание
+		ANSI_CHARSET,				// Набор символов
+		OUT_DEFAULT_PRECIS,			// Точность вывода
+		CLIP_CHARACTER_PRECIS,		// Точность отсечения
+		ANTIALIASED_QUALITY,		// Качество шрифта
+		FF_DONTCARE,	// Тип шрифта
+		fontName
+	);
+	HWND hEdit = GetDlgItem(hwnd, IDC_EDIT_DISPLAY);
+	SendMessage(hEdit, WM_SETFONT, (WPARAM)hFont, TRUE);
 }
