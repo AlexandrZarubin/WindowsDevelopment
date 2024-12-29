@@ -37,7 +37,7 @@ VOID SetSkinFromDLL(HWND hwnd, CONST CHAR skiin[]);
 VOID LoadFontFromDLL(HMODULE hFontModule,INT resourceID);
 
 VOID LoadFontsFromDLL(HMODULE hFontsModule);
-VOID ChangeFont(HWND hwnd, LPCSTR fontName);
+VOID ChangeFont(HWND hwnd, CONST CHAR fontName[]);
 INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst, LPSTR lpCmdLine, INT nCmdShow)
 {
 	//1)Регистрация класса окна
@@ -171,25 +171,25 @@ INT CALLBACK  WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		DWORD len = SizeofResource(hFontsModule, hFntRes);
 		AddFontMemResourceEx(fntData, len, NULL, &nFonts);*/
 		LoadFontsFromDLL(hFontsModule);
-		HFONT hFont = CreateFont
-		(
-			g_i_FONT_HEIGHT,			// Высота шрифта
-			g_i_FONT_WIDTH,				// Ширина шрифта (авто)
-			0,							// Угол наклона текста (в 0.1 градусах)
-			0,							// Угол наклона шрифта
-			FW_MEDIUM,					// Вес шрифта (FW_BOLD, FW_NORMAL и т.д.)
-			FALSE,						// Курсив
-			FALSE,						// Подчёркивание
-			FALSE,						// Зачёркивание
-			ANSI_CHARSET,				// Набор символов
-			OUT_DEFAULT_PRECIS,			// Точность вывода
-			CLIP_CHARACTER_PRECIS,		// Точность отсечения
-			ANTIALIASED_QUALITY,		// Качество шрифта
-			FF_DONTCARE,	// Тип шрифта
-			g_FONT_NAMES[1]			// Имя шрифта
-		);
-		SendMessage(hEdit, WM_SETFONT,(WPARAM)hFont,TRUE);
-
+		//HFONT hFont = CreateFont
+		//(
+		//	g_i_FONT_HEIGHT,			// Высота шрифта
+		//	g_i_FONT_WIDTH,				// Ширина шрифта (авто)
+		//	0,							// Угол наклона текста (в 0.1 градусах)
+		//	0,							// Угол наклона шрифта
+		//	FW_MEDIUM,					// Вес шрифта (FW_BOLD, FW_NORMAL и т.д.)
+		//	FALSE,						// Курсив
+		//	FALSE,						// Подчёркивание
+		//	FALSE,						// Зачёркивание
+		//	ANSI_CHARSET,				// Набор символов
+		//	OUT_DEFAULT_PRECIS,			// Точность вывода
+		//	CLIP_CHARACTER_PRECIS,		// Точность отсечения
+		//	ANTIALIASED_QUALITY,		// Качество шрифта
+		//	FF_DONTCARE,	// Тип шрифта
+		//	g_FONT_NAMES[1]			// Имя шрифта
+		//);
+		//SendMessage(hEdit, WM_SETFONT,(WPARAM)hFont,TRUE);
+		ChangeFont(hwnd, g_FONT_NAMES[2]);
 		CreateWindowEx
 		(
 			NULL, "Button", ".",
@@ -528,7 +528,7 @@ INT CALLBACK  WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		*/
 	case WM_CONTEXTMENU:
 	{
-
+		static INT font_index{};
 		//1) Создаем всплывающее меню
 		HMENU hMenu{ CreatePopupMenu() };
 		HMENU hMenuSkins{ CreatePopupMenu() };
@@ -546,6 +546,7 @@ INT CALLBACK  WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		InsertMenu(hMenuFonts, 0, MF_BYPOSITION | MF_STRING|MF_UNCHECKED, IDR_TERMINATOR, "Terminator Two");
 		InsertMenu(hMenuFonts, 0, MF_BYPOSITION | MF_STRING|MF_UNCHECKED, IDR_DIGITAL_7, "Digital-7");
 		CheckMenuItem(hMenuSkins, index, MF_BYPOSITION | MF_CHECKED);
+		CheckMenuItem(hMenuFonts, font_index, MF_BYPOSITION | MF_CHECKED);
 		//3) Использование контекстного меню
 		
 		DWORD item = TrackPopupMenu(hMenu, TPM_RETURNCMD | TPM_RIGHTALIGN | TPM_BOTTOMALIGN, LOWORD(lParam), HIWORD(lParam), 0, hwnd, NULL);
@@ -555,16 +556,21 @@ INT CALLBACK  WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		case IDR_METAL_MISTRAL:	//SetSkin(hwnd, "metal_mistral"); break;
 			index = item - IDR_SQUARE_BLUE;
 			break;
-		case IDR_DIGITAL_7:
+		/*case IDR_DIGITAL_7:
 			ChangeFont(hwnd, g_FONT_NAMES[0]);
 			break;
 		case IDR_MOSCOW_2024:
-			ChangeFont(hwnd, g_FONT_NAMES[1]);
-			break;
-		case IDR_TERMINATOR:
 			ChangeFont(hwnd, g_FONT_NAMES[2]);
 			break;
-
+		case IDR_TERMINATOR:
+			ChangeFont(hwnd, g_FONT_NAMES[1]);
+			break;*/
+		case IDR_DIGITAL_7:
+		case IDR_MOSCOW_2024:
+		case IDR_TERMINATOR:
+			font_index = item - IDR_FONTS - 1;
+			ChangeFont(hwnd, g_FONT_NAMES[font_index]);
+			break;
 		case IDR_EXIT: SendMessage(hwnd, WM_CLOSE, 0, 0); break;
 		}
 		HWND hEditDisplay = GetDlgItem(hwnd,IDC_EDIT_DISPLAY);
@@ -792,7 +798,7 @@ VOID LoadFontsFromDLL(HMODULE hFontsModule)
 	}
 }
 
-VOID ChangeFont(HWND hwnd, LPCSTR fontName)
+VOID ChangeFont(HWND hwnd, CONST CHAR fontName[])
 {
 	HFONT hFont = CreateFont
 	(
@@ -808,7 +814,7 @@ VOID ChangeFont(HWND hwnd, LPCSTR fontName)
 		OUT_DEFAULT_PRECIS,			// Точность вывода
 		CLIP_CHARACTER_PRECIS,		// Точность отсечения
 		ANTIALIASED_QUALITY,		// Качество шрифта
-		FF_DONTCARE,	// Тип шрифта
+		FF_DONTCARE,				// Тип шрифта
 		fontName
 	);
 	HWND hEdit = GetDlgItem(hwnd, IDC_EDIT_DISPLAY);
