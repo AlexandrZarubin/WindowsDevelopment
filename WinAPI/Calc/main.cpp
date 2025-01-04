@@ -19,6 +19,8 @@ struct g_calcState {
 
 CONST CHAR g_sz_WINDOW_CLASS[] = "CALC_VPD_311";
 CONST CHAR* g_OPERATIONS[] = { "+","-","*","/" };
+CHAR configFile[MAX_PATH]{};
+//CONST CHAR CONFIG_FILE[MAX_PATH];// = "settings.ini";
 
 INT CALLBACK  WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPrama);
 INT GetTitlVarHeight(HWND hwnd)
@@ -31,6 +33,12 @@ INT GetTitlVarHeight(HWND hwnd)
 	return title_bar_height;
 }
 
+
+VOID SaveSettings(CONST CHAR* configFile, INT themeIndex, INT fontIndex);
+VOID LoadSettings(CONST CHAR* configFile, INT* themeIndex, INT* fontIndex);
+
+
+
 VOID SetSkin(HWND hwnd, CONST CHAR skin[]);
 VOID SetSkinFromDLL(HWND hwnd, CONST CHAR skiin[]);
 
@@ -38,8 +46,24 @@ VOID LoadFontFromDLL(HMODULE hFontModule,INT resourceID);
 
 VOID LoadFontsFromDLL(HMODULE hFontsModule);
 VOID ChangeFont(HWND hwnd, CONST CHAR fontName[]);
+
+void RemoveFileSpec(char* path) 
+{
+	char* lastSlash = strrchr(path, '\\');
+	if (lastSlash) 
+	{
+		*lastSlash = '\0';
+	}
+}
+
 INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst, LPSTR lpCmdLine, INT nCmdShow)
 {
+	
+	GetModuleFileName(NULL, configFile, MAX_PATH);
+	RemoveFileSpec(configFile);
+	strcat(configFile, "\\settings.ini");
+
+	//MessageBox(NULL, configFile, "Config Path", MB_OK);
 	//1)Регистрация класса окна
 	WNDCLASSEX wClass;
 	ZeroMemory(&wClass, sizeof(wClass));
@@ -95,12 +119,14 @@ INT CALLBACK  WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	
 	static INT index{};
 	static HMODULE hFontsModule = NULL;
-
+	static INT font_index{};
 
 	switch (uMsg)
 	{
 	case WM_CREATE:
 	{
+		LoadSettings(configFile, &index, &font_index);
+
 		//CONST CHAR* customFontPatch = "FONT\\Digital-7.ttf";
 		/*HFONT hFont = SetCustomFont
 		(
@@ -189,7 +215,7 @@ INT CALLBACK  WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		//	g_FONT_NAMES[1]			// Имя шрифта
 		//);
 		//SendMessage(hEdit, WM_SETFONT,(WPARAM)hFont,TRUE);
-		ChangeFont(hwnd, g_FONT_NAMES[2]);
+		//ChangeFont(hwnd, g_FONT_NAMES[2]);
 		CreateWindowEx
 		(
 			NULL, "Button", ".",
@@ -253,7 +279,9 @@ INT CALLBACK  WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		);
 		SetSkin(hwnd, "square_blue");
 		//SetSkin(hwnd, "metal_mistral");
-		SetSkinFromDLL(hwnd, "square_blue.dll");
+		//SetSkinFromDLL(hwnd, "square_blue.dll");
+		ChangeFont(hwnd, g_FONT_NAMES[font_index]);
+		SetSkinFromDLL(hwnd, g_SKIN[index]);
 	}
 		break;
 		case WM_CTLCOLOREDIT:
@@ -528,7 +556,7 @@ INT CALLBACK  WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		*/
 	case WM_CONTEXTMENU:
 	{
-		static INT font_index{};
+		
 		//1) Создаем всплывающее меню
 		HMENU hMenu{ CreatePopupMenu() };
 		HMENU hMenuSkins{ CreatePopupMenu() };
@@ -587,7 +615,9 @@ INT CALLBACK  WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	}
 		break;
 	case WM_DESTROY:
-		 //RemoveFontResourceEx("FONT\\Digital7.ttf", FR_PRIVATE, NULL);
+		 
+		SaveSettings(configFile,index, font_index);
+		//RemoveFontResourceEx("FONT\\Digital7.ttf", FR_PRIVATE, NULL);
 		PostQuitMessage(0);
 		FreeLibrary(hFontsModule);
 		break;
@@ -637,6 +667,24 @@ VOID SetSkinFromDLL(HWND hwnd, CONST CHAR skin[])
 	}
 	FreeLibrary(hButtons);
 }
+
+
+VOID SaveSettings(CONST CHAR* configFile, INT themeIndex, INT fontIndex)
+{
+	CHAR buffer[10];
+	sprintf(buffer, "%d", themeIndex);
+	WritePrivateProfileString("Settings", "ThemeIndex", buffer, configFile);
+	sprintf(buffer, "%d", fontIndex);
+	WritePrivateProfileString("Settings", "FontIndex", buffer, configFile);
+}
+
+VOID LoadSettings(CONST CHAR* configFile, INT* themeIndex, INT* fontIndex)
+{
+	*themeIndex = GetPrivateProfileInt("Settings", "ThemeIndex", 0, configFile);
+	*fontIndex = GetPrivateProfileInt("Settings", "FontIndex", 0, configFile);
+}
+
+
 VOID SetSkin(HWND hwnd, CONST CHAR skin[])
 {
 	CHAR sz_filename[MAX_PATH]{};

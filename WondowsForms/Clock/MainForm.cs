@@ -53,5 +53,11 @@ namespace Clock
 		{
 			SetVisibility(true);
 		}
+
+		private void ToolStripMenuItemTopmost_Click(object sender, EventArgs e)
+		{
+			//this.TopMost = ToolStripMenuItemTopmost.Checked;
+			this.TopMost = true;
+		}
 	}
 }

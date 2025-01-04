@@ -31,17 +31,12 @@
 			this.components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
 			this.labelTime = new System.Windows.Forms.Label();
-			this.timer = new System.Windows.Forms.Timer(this.components);
-			this.checkBoxShowDate = new System.Windows.Forms.CheckBox();
-			this.checkBoxShowWeekDay = new System.Windows.Forms.CheckBox();
-			this.buttonHideControls = new System.Windows.Forms.Button();
-			this.notifyIcon = new System.Windows.Forms.NotifyIcon(this.components);
 			this.contextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this.ToolStripMenuItemTopmost = new System.Windows.Forms.ToolStripMenuItem();
 			this.ToolStripMenuItemsShowControls = new System.Windows.Forms.ToolStripMenuItem();
+			this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
 			this.ToolStripMenuItemShowDate = new System.Windows.Forms.ToolStripMenuItem();
 			this.ToolStripMenuItemShowWeekday = new System.Windows.Forms.ToolStripMenuItem();
-			this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
 			this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
 			this.ToolStripMenuItemChooseFont = new System.Windows.Forms.ToolStripMenuItem();
 			this.ToolStripMenuItemColors = new System.Windows.Forms.ToolStripMenuItem();
@@ -51,6 +46,11 @@
 			this.ToolStripMenuItemLoadOnWindowsStartup = new System.Windows.Forms.ToolStripMenuItem();
 			this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
 			this.ToolStripMenuItemExit = new System.Windows.Forms.ToolStripMenuItem();
+			this.timer = new System.Windows.Forms.Timer(this.components);
+			this.checkBoxShowDate = new System.Windows.Forms.CheckBox();
+			this.checkBoxShowWeekDay = new System.Windows.Forms.CheckBox();
+			this.buttonHideControls = new System.Windows.Forms.Button();
+			this.notifyIcon = new System.Windows.Forms.NotifyIcon(this.components);
 			this.contextMenuStrip.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -65,6 +65,113 @@
 			this.labelTime.TabIndex = 0;
 			this.labelTime.Text = "Time";
 			this.labelTime.DoubleClick += new System.EventHandler(this.labelTime_DoubleClick);
+			// 
+			// contextMenuStrip
+			// 
+			this.contextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.ToolStripMenuItemTopmost,
+            this.ToolStripMenuItemsShowControls,
+            this.toolStripSeparator1,
+            this.ToolStripMenuItemShowDate,
+            this.ToolStripMenuItemShowWeekday,
+            this.toolStripSeparator2,
+            this.ToolStripMenuItemChooseFont,
+            this.ToolStripMenuItemColors,
+            this.toolStripSeparator3,
+            this.ToolStripMenuItemLoadOnWindowsStartup,
+            this.toolStripSeparator4,
+            this.ToolStripMenuItemExit});
+			this.contextMenuStrip.Name = "contextMenuStrip";
+			this.contextMenuStrip.Size = new System.Drawing.Size(210, 226);
+			// 
+			// ToolStripMenuItemTopmost
+			// 
+			this.ToolStripMenuItemTopmost.CheckOnClick = true;
+			this.ToolStripMenuItemTopmost.Name = "ToolStripMenuItemTopmost";
+			this.ToolStripMenuItemTopmost.Size = new System.Drawing.Size(209, 22);
+			this.ToolStripMenuItemTopmost.Text = "Topmost";
+			this.ToolStripMenuItemTopmost.Click += new System.EventHandler(this.ToolStripMenuItemTopmost_Click);
+			// 
+			// ToolStripMenuItemsShowControls
+			// 
+			this.ToolStripMenuItemsShowControls.CheckOnClick = true;
+			this.ToolStripMenuItemsShowControls.Name = "ToolStripMenuItemsShowControls";
+			this.ToolStripMenuItemsShowControls.Size = new System.Drawing.Size(209, 22);
+			this.ToolStripMenuItemsShowControls.Text = "Show controls";
+			// 
+			// toolStripSeparator1
+			// 
+			this.toolStripSeparator1.Name = "toolStripSeparator1";
+			this.toolStripSeparator1.Size = new System.Drawing.Size(206, 6);
+			// 
+			// ToolStripMenuItemShowDate
+			// 
+			this.ToolStripMenuItemShowDate.CheckOnClick = true;
+			this.ToolStripMenuItemShowDate.Name = "ToolStripMenuItemShowDate";
+			this.ToolStripMenuItemShowDate.Size = new System.Drawing.Size(209, 22);
+			this.ToolStripMenuItemShowDate.Text = "Show date";
+			// 
+			// ToolStripMenuItemShowWeekday
+			// 
+			this.ToolStripMenuItemShowWeekday.CheckOnClick = true;
+			this.ToolStripMenuItemShowWeekday.Name = "ToolStripMenuItemShowWeekday";
+			this.ToolStripMenuItemShowWeekday.Size = new System.Drawing.Size(209, 22);
+			this.ToolStripMenuItemShowWeekday.Text = "Show weekday";
+			// 
+			// toolStripSeparator2
+			// 
+			this.toolStripSeparator2.Name = "toolStripSeparator2";
+			this.toolStripSeparator2.Size = new System.Drawing.Size(206, 6);
+			// 
+			// ToolStripMenuItemChooseFont
+			// 
+			this.ToolStripMenuItemChooseFont.Name = "ToolStripMenuItemChooseFont";
+			this.ToolStripMenuItemChooseFont.Size = new System.Drawing.Size(209, 22);
+			this.ToolStripMenuItemChooseFont.Text = "Choose font";
+			// 
+			// ToolStripMenuItemColors
+			// 
+			this.ToolStripMenuItemColors.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.ToolStripMenuItemBackroundColor,
+            this.ToolStripMenuItemForegroundColor});
+			this.ToolStripMenuItemColors.Name = "ToolStripMenuItemColors";
+			this.ToolStripMenuItemColors.Size = new System.Drawing.Size(209, 22);
+			this.ToolStripMenuItemColors.Text = "Colors";
+			// 
+			// ToolStripMenuItemBackroundColor
+			// 
+			this.ToolStripMenuItemBackroundColor.Name = "ToolStripMenuItemBackroundColor";
+			this.ToolStripMenuItemBackroundColor.Size = new System.Drawing.Size(166, 22);
+			this.ToolStripMenuItemBackroundColor.Text = "Backround color";
+			// 
+			// ToolStripMenuItemForegroundColor
+			// 
+			this.ToolStripMenuItemForegroundColor.Name = "ToolStripMenuItemForegroundColor";
+			this.ToolStripMenuItemForegroundColor.Size = new System.Drawing.Size(166, 22);
+			this.ToolStripMenuItemForegroundColor.Text = "Foreground color";
+			// 
+			// toolStripSeparator3
+			// 
+			this.toolStripSeparator3.Name = "toolStripSeparator3";
+			this.toolStripSeparator3.Size = new System.Drawing.Size(206, 6);
+			// 
+			// ToolStripMenuItemLoadOnWindowsStartup
+			// 
+			this.ToolStripMenuItemLoadOnWindowsStartup.CheckOnClick = true;
+			this.ToolStripMenuItemLoadOnWindowsStartup.Name = "ToolStripMenuItemLoadOnWindowsStartup";
+			this.ToolStripMenuItemLoadOnWindowsStartup.Size = new System.Drawing.Size(209, 22);
+			this.ToolStripMenuItemLoadOnWindowsStartup.Text = "Load on Windows startup";
+			// 
+			// toolStripSeparator4
+			// 
+			this.toolStripSeparator4.Name = "toolStripSeparator4";
+			this.toolStripSeparator4.Size = new System.Drawing.Size(206, 6);
+			// 
+			// ToolStripMenuItemExit
+			// 
+			this.ToolStripMenuItemExit.Name = "ToolStripMenuItemExit";
+			this.ToolStripMenuItemExit.Size = new System.Drawing.Size(209, 22);
+			this.ToolStripMenuItemExit.Text = "Exit";
 			// 
 			// timer
 			// 
@@ -110,112 +217,6 @@
 			this.notifyIcon.Icon = ((System.Drawing.Icon)(resources.GetObject("notifyIcon.Icon")));
 			this.notifyIcon.Text = "notifyIcon";
 			this.notifyIcon.Visible = true;
-			// 
-			// contextMenuStrip
-			// 
-			this.contextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.ToolStripMenuItemTopmost,
-            this.ToolStripMenuItemsShowControls,
-            this.toolStripSeparator1,
-            this.ToolStripMenuItemShowDate,
-            this.ToolStripMenuItemShowWeekday,
-            this.toolStripSeparator2,
-            this.ToolStripMenuItemChooseFont,
-            this.ToolStripMenuItemColors,
-            this.toolStripSeparator3,
-            this.ToolStripMenuItemLoadOnWindowsStartup,
-            this.toolStripSeparator4,
-            this.ToolStripMenuItemExit});
-			this.contextMenuStrip.Name = "contextMenuStrip";
-			this.contextMenuStrip.Size = new System.Drawing.Size(210, 204);
-			// 
-			// ToolStripMenuItemTopmost
-			// 
-			this.ToolStripMenuItemTopmost.CheckOnClick = true;
-			this.ToolStripMenuItemTopmost.Name = "ToolStripMenuItemTopmost";
-			this.ToolStripMenuItemTopmost.Size = new System.Drawing.Size(209, 22);
-			this.ToolStripMenuItemTopmost.Text = "Topmost";
-			// 
-			// ToolStripMenuItemsShowControls
-			// 
-			this.ToolStripMenuItemsShowControls.CheckOnClick = true;
-			this.ToolStripMenuItemsShowControls.Name = "ToolStripMenuItemsShowControls";
-			this.ToolStripMenuItemsShowControls.Size = new System.Drawing.Size(209, 22);
-			this.ToolStripMenuItemsShowControls.Text = "Show controls";
-			// 
-			// ToolStripMenuItemShowDate
-			// 
-			this.ToolStripMenuItemShowDate.CheckOnClick = true;
-			this.ToolStripMenuItemShowDate.Name = "ToolStripMenuItemShowDate";
-			this.ToolStripMenuItemShowDate.Size = new System.Drawing.Size(209, 22);
-			this.ToolStripMenuItemShowDate.Text = "Show date";
-			// 
-			// ToolStripMenuItemShowWeekday
-			// 
-			this.ToolStripMenuItemShowWeekday.CheckOnClick = true;
-			this.ToolStripMenuItemShowWeekday.Name = "ToolStripMenuItemShowWeekday";
-			this.ToolStripMenuItemShowWeekday.Size = new System.Drawing.Size(209, 22);
-			this.ToolStripMenuItemShowWeekday.Text = "Show weekday";
-			// 
-			// toolStripSeparator1
-			// 
-			this.toolStripSeparator1.Name = "toolStripSeparator1";
-			this.toolStripSeparator1.Size = new System.Drawing.Size(206, 6);
-			// 
-			// toolStripSeparator2
-			// 
-			this.toolStripSeparator2.Name = "toolStripSeparator2";
-			this.toolStripSeparator2.Size = new System.Drawing.Size(206, 6);
-			// 
-			// ToolStripMenuItemChooseFont
-			// 
-			this.ToolStripMenuItemChooseFont.Name = "ToolStripMenuItemChooseFont";
-			this.ToolStripMenuItemChooseFont.Size = new System.Drawing.Size(209, 22);
-			this.ToolStripMenuItemChooseFont.Text = "Choose font";
-			// 
-			// ToolStripMenuItemColors
-			// 
-			this.ToolStripMenuItemColors.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.ToolStripMenuItemBackroundColor,
-            this.ToolStripMenuItemForegroundColor});
-			this.ToolStripMenuItemColors.Name = "ToolStripMenuItemColors";
-			this.ToolStripMenuItemColors.Size = new System.Drawing.Size(209, 22);
-			this.ToolStripMenuItemColors.Text = "Colors";
-			// 
-			// ToolStripMenuItemBackroundColor
-			// 
-			this.ToolStripMenuItemBackroundColor.Name = "ToolStripMenuItemBackroundColor";
-			this.ToolStripMenuItemBackroundColor.Size = new System.Drawing.Size(180, 22);
-			this.ToolStripMenuItemBackroundColor.Text = "Backround color";
-			// 
-			// ToolStripMenuItemForegroundColor
-			// 
-			this.ToolStripMenuItemForegroundColor.Name = "ToolStripMenuItemForegroundColor";
-			this.ToolStripMenuItemForegroundColor.Size = new System.Drawing.Size(180, 22);
-			this.ToolStripMenuItemForegroundColor.Text = "Foreground color";
-			// 
-			// toolStripSeparator3
-			// 
-			this.toolStripSeparator3.Name = "toolStripSeparator3";
-			this.toolStripSeparator3.Size = new System.Drawing.Size(206, 6);
-			// 
-			// ToolStripMenuItemLoadOnWindowsStartup
-			// 
-			this.ToolStripMenuItemLoadOnWindowsStartup.CheckOnClick = true;
-			this.ToolStripMenuItemLoadOnWindowsStartup.Name = "ToolStripMenuItemLoadOnWindowsStartup";
-			this.ToolStripMenuItemLoadOnWindowsStartup.Size = new System.Drawing.Size(209, 22);
-			this.ToolStripMenuItemLoadOnWindowsStartup.Text = "Load on Windows startup";
-			// 
-			// toolStripSeparator4
-			// 
-			this.toolStripSeparator4.Name = "toolStripSeparator4";
-			this.toolStripSeparator4.Size = new System.Drawing.Size(206, 6);
-			// 
-			// ToolStripMenuItemExit
-			// 
-			this.ToolStripMenuItemExit.Name = "ToolStripMenuItemExit";
-			this.ToolStripMenuItemExit.Size = new System.Drawing.Size(209, 22);
-			this.ToolStripMenuItemExit.Text = "Exit";
 			// 
 			// MainForm
 			// 
