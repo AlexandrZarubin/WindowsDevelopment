@@ -91,6 +91,20 @@ namespace Clock
 			ToolStripMenuItemShowWeekday.Checked=checkBoxShowWeekDay.Checked;
 		}
 
+		private void ToolStripMenuItemBackroundColor_Click(object sender, EventArgs e)
+		{
+			colorDialog.Color=labelTime.BackColor;
+			DialogResult result=colorDialog.ShowDialog(this);
+			if (result == DialogResult.OK) labelTime.BackColor = colorDialog.Color;
+
+        }
+
+		private void ToolStripMenuItemForegroundColor_Click(object sender, EventArgs e)
+		{
+			colorDialog.Color = labelTime.ForeColor;
+			if (colorDialog.ShowDialog(this) == DialogResult.OK) ;labelTime.ForeColor = colorDialog.Color;
+		}
+
 
 
 		//private void ToolStripMenuItemsShowControls_CheckedChanged(object sender, EventArgs e)
