@@ -18,6 +18,8 @@ namespace Clock
 			InitializeComponent();
 			labelTime.BackColor = Color.AliceBlue;
 			this.Location = new Point(Screen.PrimaryScreen.Bounds.Width - this.Width,50);
+			ToolStripMenuItemsShowControls.Checked = true; //works not correctly
+			//ToolStripMenuItemsShowControls.Checked = false; //works not correctly
 		}
 		void SetVisibility(bool visible)
 		{
@@ -46,18 +48,56 @@ namespace Clock
 
 		private void buttonHideControls_Click(object sender, EventArgs e)
 		{
-			SetVisibility(false);
+			//SetVisibility(false);
+			ToolStripMenuItemsShowControls.Checked = false;
 		}
 
 		private void labelTime_DoubleClick(object sender, EventArgs e)
 		{
-			SetVisibility(true);
+			//SetVisibility(true);
+			ToolStripMenuItemsShowControls.Checked = true;
 		}
 
-		private void ToolStripMenuItemTopmost_Click(object sender, EventArgs e)
+		//private void ToolStripMenuItemExit_Click(object sender, EventArgs e)=>this.Close();
+		private void ToolStripMenuItemExit_Click(object sender, EventArgs e)
 		{
-			//this.TopMost = ToolStripMenuItemTopmost.Checked;
-			this.TopMost = true;
+			this.Close();
 		}
+
+		private void ToolStripMenuItemTopmost_CheckedChanged(object sender, EventArgs e)=> this.TopMost = ToolStripMenuItemTopmost.Checked;
+
+		private void ToolStripMenuItemsShowControls_CheckStateChanged(object sender, EventArgs e)
+		{
+			SetVisibility(ToolStripMenuItemsShowControls.Checked);
+		}
+
+		private void ToolStripMenuItemShowDate_CheckedChanged(object sender, EventArgs e)
+		{
+			checkBoxShowDate.Checked = ToolStripMenuItemShowDate.Checked;
+		}
+
+		private void checkBoxShowDate_CheckedChanged(object sender, EventArgs e)
+		{
+			ToolStripMenuItemShowDate.Checked=checkBoxShowDate.Checked;
+		}
+
+		private void ToolStripMenuItemShowWeekday_CheckedChanged(object sender, EventArgs e)
+		{
+			checkBoxShowWeekDay.Checked=ToolStripMenuItemShowWeekday.Checked;
+		}
+
+		private void checkBoxShowWeekDay_CheckedChanged(object sender, EventArgs e)
+		{
+			ToolStripMenuItemShowWeekday.Checked=checkBoxShowWeekDay.Checked;
+		}
+
+
+
+		//private void ToolStripMenuItemsShowControls_CheckedChanged(object sender, EventArgs e)
+		//{
+		//	SetVisibility(ToolStripMenuItemsShowControls.Checked);	
+		//}
+
+
 	}
 }

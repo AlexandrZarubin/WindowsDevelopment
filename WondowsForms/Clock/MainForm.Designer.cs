@@ -82,7 +82,7 @@
             this.toolStripSeparator4,
             this.ToolStripMenuItemExit});
 			this.contextMenuStrip.Name = "contextMenuStrip";
-			this.contextMenuStrip.Size = new System.Drawing.Size(210, 226);
+			this.contextMenuStrip.Size = new System.Drawing.Size(210, 204);
 			// 
 			// ToolStripMenuItemTopmost
 			// 
@@ -90,7 +90,7 @@
 			this.ToolStripMenuItemTopmost.Name = "ToolStripMenuItemTopmost";
 			this.ToolStripMenuItemTopmost.Size = new System.Drawing.Size(209, 22);
 			this.ToolStripMenuItemTopmost.Text = "Topmost";
-			this.ToolStripMenuItemTopmost.Click += new System.EventHandler(this.ToolStripMenuItemTopmost_Click);
+			this.ToolStripMenuItemTopmost.CheckedChanged += new System.EventHandler(this.ToolStripMenuItemTopmost_CheckedChanged);
 			// 
 			// ToolStripMenuItemsShowControls
 			// 
@@ -98,6 +98,7 @@
 			this.ToolStripMenuItemsShowControls.Name = "ToolStripMenuItemsShowControls";
 			this.ToolStripMenuItemsShowControls.Size = new System.Drawing.Size(209, 22);
 			this.ToolStripMenuItemsShowControls.Text = "Show controls";
+			this.ToolStripMenuItemsShowControls.CheckStateChanged += new System.EventHandler(this.ToolStripMenuItemsShowControls_CheckStateChanged);
 			// 
 			// toolStripSeparator1
 			// 
@@ -110,6 +111,7 @@
 			this.ToolStripMenuItemShowDate.Name = "ToolStripMenuItemShowDate";
 			this.ToolStripMenuItemShowDate.Size = new System.Drawing.Size(209, 22);
 			this.ToolStripMenuItemShowDate.Text = "Show date";
+			this.ToolStripMenuItemShowDate.CheckedChanged += new System.EventHandler(this.ToolStripMenuItemShowDate_CheckedChanged);
 			// 
 			// ToolStripMenuItemShowWeekday
 			// 
@@ -117,6 +119,7 @@
 			this.ToolStripMenuItemShowWeekday.Name = "ToolStripMenuItemShowWeekday";
 			this.ToolStripMenuItemShowWeekday.Size = new System.Drawing.Size(209, 22);
 			this.ToolStripMenuItemShowWeekday.Text = "Show weekday";
+			this.ToolStripMenuItemShowWeekday.CheckedChanged += new System.EventHandler(this.ToolStripMenuItemShowWeekday_CheckedChanged);
 			// 
 			// toolStripSeparator2
 			// 
@@ -172,6 +175,7 @@
 			this.ToolStripMenuItemExit.Name = "ToolStripMenuItemExit";
 			this.ToolStripMenuItemExit.Size = new System.Drawing.Size(209, 22);
 			this.ToolStripMenuItemExit.Text = "Exit";
+			this.ToolStripMenuItemExit.Click += new System.EventHandler(this.ToolStripMenuItemExit_Click);
 			// 
 			// timer
 			// 
@@ -188,6 +192,7 @@
 			this.checkBoxShowDate.TabIndex = 1;
 			this.checkBoxShowDate.Text = "Show Date";
 			this.checkBoxShowDate.UseVisualStyleBackColor = true;
+			this.checkBoxShowDate.CheckedChanged += new System.EventHandler(this.checkBoxShowDate_CheckedChanged);
 			// 
 			// checkBoxShowWeekDay
 			// 
@@ -199,6 +204,7 @@
 			this.checkBoxShowWeekDay.TabIndex = 2;
 			this.checkBoxShowWeekDay.Text = "Show weekDay";
 			this.checkBoxShowWeekDay.UseVisualStyleBackColor = true;
+			this.checkBoxShowWeekDay.CheckedChanged += new System.EventHandler(this.checkBoxShowWeekDay_CheckedChanged);
 			// 
 			// buttonHideControls
 			// 
