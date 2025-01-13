@@ -52,6 +52,7 @@
 			this.buttonHideControls = new System.Windows.Forms.Button();
 			this.notifyIcon = new System.Windows.Forms.NotifyIcon(this.components);
 			this.colorDialog = new System.Windows.Forms.ColorDialog();
+			this.ToolStripMenuItemShowConsole = new System.Windows.Forms.ToolStripMenuItem();
 			this.contextMenuStrip.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -72,6 +73,7 @@
 			this.contextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.ToolStripMenuItemTopmost,
             this.ToolStripMenuItemsShowControls,
+            this.ToolStripMenuItemShowConsole,
             this.toolStripSeparator1,
             this.ToolStripMenuItemShowDate,
             this.ToolStripMenuItemShowWeekday,
@@ -83,7 +85,7 @@
             this.toolStripSeparator4,
             this.ToolStripMenuItemExit});
 			this.contextMenuStrip.Name = "contextMenuStrip";
-			this.contextMenuStrip.Size = new System.Drawing.Size(210, 226);
+			this.contextMenuStrip.Size = new System.Drawing.Size(210, 248);
 			// 
 			// ToolStripMenuItemTopmost
 			// 
@@ -132,6 +134,7 @@
 			this.ToolStripMenuItemChooseFont.Name = "ToolStripMenuItemChooseFont";
 			this.ToolStripMenuItemChooseFont.Size = new System.Drawing.Size(209, 22);
 			this.ToolStripMenuItemChooseFont.Text = "Choose font";
+			this.ToolStripMenuItemChooseFont.Click += new System.EventHandler(this.ToolStripMenuItemChooseFont_Click);
 			// 
 			// ToolStripMenuItemColors
 			// 
@@ -226,6 +229,15 @@
 			this.notifyIcon.Icon = ((System.Drawing.Icon)(resources.GetObject("notifyIcon.Icon")));
 			this.notifyIcon.Text = "notifyIcon";
 			this.notifyIcon.Visible = true;
+			this.notifyIcon.DoubleClick += new System.EventHandler(this.notifyIcon_DoubleClick);
+			// 
+			// ToolStripMenuItemShowConsole
+			// 
+			this.ToolStripMenuItemShowConsole.CheckOnClick = true;
+			this.ToolStripMenuItemShowConsole.Name = "ToolStripMenuItemShowConsole";
+			this.ToolStripMenuItemShowConsole.Size = new System.Drawing.Size(209, 22);
+			this.ToolStripMenuItemShowConsole.Text = "Show console";
+			this.ToolStripMenuItemShowConsole.CheckedChanged += new System.EventHandler(this.ToolStripMenuItemShowConsole_CheckedChanged);
 			// 
 			// MainForm
 			// 
@@ -270,6 +282,7 @@
 		private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
 		private System.Windows.Forms.ToolStripMenuItem ToolStripMenuItemExit;
 		private System.Windows.Forms.ColorDialog colorDialog;
+		private System.Windows.Forms.ToolStripMenuItem ToolStripMenuItemShowConsole;
 	}
 }
 
