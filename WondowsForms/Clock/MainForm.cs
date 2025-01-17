@@ -17,15 +17,21 @@ namespace Clock
 		FontDialog fontDialog;
 		public MainForm()
 		{
+			this.SetStyle(ControlStyles.OptimizedDoubleBuffer|ControlStyles.UserPaint| ControlStyles.AllPaintingInWmPaint, true);
+			this.UpdateStyles();
+			
 			InitializeComponent();
 			labelTime.BackColor = Color.AliceBlue;
 			this.Location = new Point(Screen.PrimaryScreen.Bounds.Width - this.Width,50);
 			ToolStripMenuItemsShowControls.Checked = true; //works not correctly
 			//ToolStripMenuItemsShowControls.Checked = false; //works not correctly
 			ToolStripMenuItemShowConsole.Checked = true;
-			fontDialog = new FontDialog();
+			//fontDialog = new FontDialog();
 
-			Console.WriteLine(Directory.GetCurrentDirectory());
+			//Console.WriteLine(Directory.GetCurrentDirectory());
+			LoadSettings();
+			if (fontDialog == null) fontDialog = new FontDialog();
+
 		}
 		void SetVisibility(bool visible)
 		{
@@ -35,6 +41,54 @@ namespace Clock
 			this.FormBorderStyle =visible?FormBorderStyle.FixedDialog: FormBorderStyle.None;
 			this.ShowInTaskbar = visible;
 			this.TransparencyKey =visible?Color.Empty: this.BackColor;
+		}
+		void LoadSettings()
+		{
+			StreamReader sr = null;
+			try
+			{
+				sr = new StreamReader($"{Path.GetDirectoryName(Application.ExecutablePath)}\\..\\..\\Settings.ini");
+				ToolStripMenuItemTopmost.Checked = Boolean.Parse(sr.ReadLine());
+				ToolStripMenuItemsShowControls.Checked = Boolean.Parse(sr.ReadLine());
+				ToolStripMenuItemShowConsole.Checked = Boolean.Parse(sr.ReadLine());
+				ToolStripMenuItemShowDate.Checked = Boolean.Parse(sr.ReadLine());
+				ToolStripMenuItemShowWeekday.Checked = Boolean.Parse(sr.ReadLine());
+				string fontname = sr.ReadLine();
+				float fontsize = (float)Convert.ToDouble(sr.ReadLine());
+				labelTime.BackColor = Color.FromArgb(Convert.ToInt32(sr.ReadLine()));
+				labelTime.ForeColor = Color.FromArgb(Convert.ToInt32(sr.ReadLine()));
+				//sr.Close();
+				fontDialog = new FontDialog(fontname, fontsize);
+				labelTime.Font = fontDialog.Font;
+			}
+			catch (Exception ex)
+			{
+				MessageBox.Show(this, ex.Message, "In LoadSettings()", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				MessageBox.Show(this, ex.ToString(), "In LoadSettings()", MessageBoxButtons.OK, MessageBoxIcon.Error);
+			}
+			finally
+			{
+				if (sr != null) sr.Close();
+			}
+		}
+		void SaveSettings()
+		{
+			if (string.IsNullOrEmpty(fontDialog.FontFilename))
+			{
+				fontDialog.FontFilename = labelTime.Font.FontFamily.Name; // Используем текущий шрифт
+			}
+			StreamWriter sw = new StreamWriter($"{Path.GetDirectoryName(Application.ExecutablePath)}\\..\\..\\Settings.ini");
+			sw.WriteLine($"{ToolStripMenuItemTopmost.Checked}");
+			sw.WriteLine($"{ToolStripMenuItemsShowControls.Checked}");
+			sw.WriteLine($"{ToolStripMenuItemShowConsole.Checked}");
+			sw.WriteLine($"{ToolStripMenuItemShowDate.Checked}");
+			sw.WriteLine($"{ToolStripMenuItemShowWeekday.Checked}");
+			//sw.WriteLine($"{comboBoxFonts.SelectedItem}")
+			sw.WriteLine($"{fontDialog.FontFilename}");
+			sw.WriteLine($"{labelTime.Font.Size}");
+			sw.WriteLine($"{labelTime.BackColor.ToArgb()}");
+			sw.WriteLine($"{labelTime.ForeColor.ToArgb()}");
+			sw.Close();
 		}
 		private void timer_Tick(object sender, EventArgs e)
 		{
@@ -108,7 +162,7 @@ namespace Clock
 		private void ToolStripMenuItemForegroundColor_Click(object sender, EventArgs e)
 		{
 			colorDialog.Color = labelTime.ForeColor;
-			if (colorDialog.ShowDialog(this) == DialogResult.OK) ;labelTime.ForeColor = colorDialog.Color;
+			if (colorDialog.ShowDialog(this) == DialogResult.OK)labelTime.ForeColor = colorDialog.Color;
 		}
 
 		private void ToolStripMenuItemChooseFont_Click(object sender, EventArgs e)
@@ -137,6 +191,11 @@ namespace Clock
 		static extern bool AllocConsole();
 		[DllImport("kernel32.dll")]
 		static extern bool FreeConsole();
+
+		private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
+		{
+			SaveSettings();
+		}
 
 
 		//private void ToolStripMenuItemsShowControls_CheckedChanged(object sender, EventArgs e)
