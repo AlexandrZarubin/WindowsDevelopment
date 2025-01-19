@@ -46,6 +46,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AlaramsDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AlaramsDialog.Designer.cs">
+      <DependentUpon>AlaramsDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="FontDialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -60,6 +66,9 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="AlaramsDialog.resx">
+      <DependentUpon>AlaramsDialog.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="FontDialog.resx">
       <DependentUpon>FontDialog.cs</DependentUpon>
     </EmbeddedResource>
