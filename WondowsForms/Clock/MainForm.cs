@@ -10,17 +10,20 @@ using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
 using System.Runtime.InteropServices;	//DllImport
 using System.IO;                        //Directory
+using Microsoft.Win32;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace Clock
 {
 	public partial class MainForm : Form
 	{
-		FontDialog fontDialog;																	// Диалоговое окно для выбора шрифта
+		FontDialog fontDialog;                                                                  // Диалоговое окно для выбора шрифта
+		AlaramsDialog alarmsDialog;
 		public MainForm()																		// Конструктор формы
 		{
 			// Оптимизация отрисовки
-			this.SetStyle(ControlStyles.OptimizedDoubleBuffer|ControlStyles.UserPaint|ControlStyles.AllPaintingInWmPaint, true);
-			this.UpdateStyles();                                                                // Применение стилей
+			//this.SetStyle(ControlStyles.OptimizedDoubleBuffer|ControlStyles.UserPaint|ControlStyles.AllPaintingInWmPaint, true);
+			//this.UpdateStyles();                                                                // Применение стилей
 
 			InitializeComponent();
 			labelTime.BackColor = Color.AliceBlue;												// Установка фона для label
@@ -32,6 +35,7 @@ namespace Clock
 
 			//Console.WriteLine(Directory.GetCurrentDirectory());
 			LoadSettings();
+			alarmsDialog = new AlaramsDialog();
 			if (fontDialog == null) fontDialog = new FontDialog();
 
 		}
@@ -70,7 +74,7 @@ namespace Clock
 			}
 			finally                                                                             // Закрываем поток
 			{
-				if (sr != null) sr.Close();
+				if(sr != null) sr.Close();
 			}
 		}
 		void SaveSettings()
@@ -79,7 +83,7 @@ namespace Clock
 			{
 				fontDialog.FontFilename = labelTime.Font.FontFamily.Name; // Используем текущий шрифт
 			}
-			StreamWriter sw = new StreamWriter($"{Path.GetDirectoryName(Application.ExecutablePath)}\\..\\..\\Settings.ini");
+			StreamWriter sw = new StreamWriter($@"{Path.GetDirectoryName(Application.ExecutablePath)}\..\..\Settings.ini");
 			sw.WriteLine($"{ToolStripMenuItemTopmost.Checked}");
 			sw.WriteLine($"{ToolStripMenuItemsShowControls.Checked}");
 			sw.WriteLine($"{ToolStripMenuItemShowConsole.Checked}");
@@ -203,8 +207,17 @@ namespace Clock
 
 		private void ToolStripMenuItemAlarams_Click(object sender, EventArgs e)
 		{
-			AlaramsDialog alarmsDialog = new AlaramsDialog();
-			alarmsDialog.ShowDialog(this);
+			//AlaramsDialog alarmsDialog = new AlaramsDialog();
+			alarmsDialog.ShowDialog();
+		}
+
+		private void ToolStripMenuItemLoadOnWindowsStartup_CheckedChanged(object sender, EventArgs e)
+		{
+			string key_name = "Clock_VPD_311";
+			RegistryKey Key=Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Run", true);//true - writable
+			if (ToolStripMenuItemLoadOnWindowsStartup.Checked) Key.SetValue(key_name, Application.ExecutablePath);	
+			else Key.DeleteValue(key_name, false);                                              //false - throwOnMissingValue
+			Key.Dispose();
 		}
 
 
