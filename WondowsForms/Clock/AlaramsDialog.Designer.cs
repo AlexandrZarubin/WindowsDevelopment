@@ -33,6 +33,8 @@
 			this.labelAlarmInfo = new System.Windows.Forms.Label();
 			this.buttonAdd = new System.Windows.Forms.Button();
 			this.buttonCancel = new System.Windows.Forms.Button();
+			this.buttonEdit = new System.Windows.Forms.Button();
+			this.buttonDelete = new System.Windows.Forms.Button();
 			this.SuspendLayout();
 			// 
 			// listBoxAlarms
@@ -78,11 +80,34 @@
 			this.buttonCancel.Text = "Cancel";
 			this.buttonCancel.UseVisualStyleBackColor = true;
 			// 
+			// buttonEdit
+			// 
+			this.buttonEdit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.buttonEdit.Location = new System.Drawing.Point(257, 269);
+			this.buttonEdit.Name = "buttonEdit";
+			this.buttonEdit.Size = new System.Drawing.Size(83, 32);
+			this.buttonEdit.TabIndex = 4;
+			this.buttonEdit.Text = "Edit";
+			this.buttonEdit.UseVisualStyleBackColor = true;
+			this.buttonEdit.Click += new System.EventHandler(this.buttonEdit_Click);
+			// 
+			// buttonDelete
+			// 
+			this.buttonDelete.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.buttonDelete.Location = new System.Drawing.Point(172, 269);
+			this.buttonDelete.Name = "buttonDelete";
+			this.buttonDelete.Size = new System.Drawing.Size(79, 32);
+			this.buttonDelete.TabIndex = 5;
+			this.buttonDelete.Text = "Delete";
+			this.buttonDelete.UseVisualStyleBackColor = true;
+			// 
 			// AlaramsDialog
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(547, 317);
+			this.Controls.Add(this.buttonDelete);
+			this.Controls.Add(this.buttonEdit);
 			this.Controls.Add(this.buttonCancel);
 			this.Controls.Add(this.buttonAdd);
 			this.Controls.Add(this.labelAlarmInfo);
@@ -101,5 +126,7 @@
 		private System.Windows.Forms.Label labelAlarmInfo;
 		private System.Windows.Forms.Button buttonAdd;
 		private System.Windows.Forms.Button buttonCancel;
+		private System.Windows.Forms.Button buttonEdit;
+		private System.Windows.Forms.Button buttonDelete;
 	}
 }

@@ -209,6 +209,12 @@ namespace Clock
 		{
 			//AlaramsDialog alarmsDialog = new AlaramsDialog();
 			alarmsDialog.ShowDialog();
+			//alarmsDialog = new AlaramsDialog();
+			//alarmsDialog.LoadAlarmsFromFile();
+			//if (alarmsDialog.ShowDialog() == DialogResult.OK)
+			//{
+				//alarmsDialog.SaveAlarmsToFile();
+			//}
 		}
 
 		private void ToolStripMenuItemLoadOnWindowsStartup_CheckedChanged(object sender, EventArgs e)
