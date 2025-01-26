@@ -48,5 +48,14 @@ namespace Clock
 				}
 			}
 		}
+
+		private void buttonDelete_Click(object sender, EventArgs e)
+		{
+			if (listBoxAlarms.SelectedItem is Alarm selectedAlarm)
+			{
+				alarms.Remove(selectedAlarm);
+				RefreshAlarmsList();
+			}	
+		}
 	}
 }
