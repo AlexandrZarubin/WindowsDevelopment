@@ -16,6 +16,7 @@ namespace Clock
 		{
 			InitializeComponent();
 			dateTimePickerDate.Enabled = false;
+			this.StartPosition = FormStartPosition.Manual;
 		}
 
 		private void checkBoxUSeDate_CheckedChanged(object sender, EventArgs e)

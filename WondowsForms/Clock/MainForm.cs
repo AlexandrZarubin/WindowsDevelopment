@@ -35,7 +35,7 @@ namespace Clock
 
 			//Console.WriteLine(Directory.GetCurrentDirectory());
 			LoadSettings();
-			alarmsDialog = new AlaramsDialog();
+			alarmsDialog = new AlaramsDialog(this);
 			if (fontDialog == null) fontDialog = new FontDialog();
 
 		}
