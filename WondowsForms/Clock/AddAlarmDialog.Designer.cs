@@ -36,6 +36,8 @@
 			this.labelfilename = new System.Windows.Forms.Label();
 			this.buttonOk = new System.Windows.Forms.Button();
 			this.buttonCancel = new System.Windows.Forms.Button();
+			this.richTextBoxMessage = new System.Windows.Forms.RichTextBox();
+			this.buttonChooseFile = new System.Windows.Forms.Button();
 			this.SuspendLayout();
 			// 
 			// checkBoxUSeDate
@@ -66,6 +68,7 @@
 			this.dateTimePickerTime.Format = System.Windows.Forms.DateTimePickerFormat.Time;
 			this.dateTimePickerTime.Location = new System.Drawing.Point(188, 59);
 			this.dateTimePickerTime.Name = "dateTimePickerTime";
+			this.dateTimePickerTime.ShowUpDown = true;
 			this.dateTimePickerTime.Size = new System.Drawing.Size(169, 31);
 			this.dateTimePickerTime.TabIndex = 2;
 			// 
@@ -86,16 +89,17 @@
 			this.checkedListBoxWeekDays.Location = new System.Drawing.Point(13, 112);
 			this.checkedListBoxWeekDays.MultiColumn = true;
 			this.checkedListBoxWeekDays.Name = "checkedListBoxWeekDays";
-			this.checkedListBoxWeekDays.Size = new System.Drawing.Size(344, 25);
+			this.checkedListBoxWeekDays.Size = new System.Drawing.Size(415, 25);
 			this.checkedListBoxWeekDays.TabIndex = 3;
 			// 
 			// labelfilename
 			// 
 			this.labelfilename.AutoSize = true;
-			this.labelfilename.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-			this.labelfilename.Location = new System.Drawing.Point(25, 165);
+			this.labelfilename.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+			this.labelfilename.Location = new System.Drawing.Point(12, 252);
+			this.labelfilename.MaximumSize = new System.Drawing.Size(350, 0);
 			this.labelfilename.Name = "labelfilename";
-			this.labelfilename.Size = new System.Drawing.Size(100, 25);
+			this.labelfilename.Size = new System.Drawing.Size(63, 16);
 			this.labelfilename.TabIndex = 4;
 			this.labelfilename.Text = "Filename";
 			// 
@@ -103,7 +107,7 @@
 			// 
 			this.buttonOk.DialogResult = System.Windows.Forms.DialogResult.OK;
 			this.buttonOk.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-			this.buttonOk.Location = new System.Drawing.Point(154, 281);
+			this.buttonOk.Location = new System.Drawing.Point(216, 321);
 			this.buttonOk.Name = "buttonOk";
 			this.buttonOk.Size = new System.Drawing.Size(103, 36);
 			this.buttonOk.TabIndex = 5;
@@ -115,18 +119,39 @@
 			// 
 			this.buttonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
 			this.buttonCancel.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-			this.buttonCancel.Location = new System.Drawing.Point(263, 281);
+			this.buttonCancel.Location = new System.Drawing.Point(325, 321);
 			this.buttonCancel.Name = "buttonCancel";
 			this.buttonCancel.Size = new System.Drawing.Size(103, 35);
 			this.buttonCancel.TabIndex = 6;
 			this.buttonCancel.Text = "Cancel";
 			this.buttonCancel.UseVisualStyleBackColor = true;
 			// 
+			// richTextBoxMessage
+			// 
+			this.richTextBoxMessage.Location = new System.Drawing.Point(13, 153);
+			this.richTextBoxMessage.Name = "richTextBoxMessage";
+			this.richTextBoxMessage.Size = new System.Drawing.Size(415, 96);
+			this.richTextBoxMessage.TabIndex = 7;
+			this.richTextBoxMessage.Text = "";
+			// 
+			// buttonChooseFile
+			// 
+			this.buttonChooseFile.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+			this.buttonChooseFile.Location = new System.Drawing.Point(13, 321);
+			this.buttonChooseFile.Name = "buttonChooseFile";
+			this.buttonChooseFile.Size = new System.Drawing.Size(99, 36);
+			this.buttonChooseFile.TabIndex = 8;
+			this.buttonChooseFile.Text = "Обзор";
+			this.buttonChooseFile.UseVisualStyleBackColor = true;
+			this.buttonChooseFile.Click += new System.EventHandler(this.buttonChooseFile_Click);
+			// 
 			// AddAlarmDialog
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(394, 351);
+			this.ClientSize = new System.Drawing.Size(450, 368);
+			this.Controls.Add(this.buttonChooseFile);
+			this.Controls.Add(this.richTextBoxMessage);
 			this.Controls.Add(this.buttonCancel);
 			this.Controls.Add(this.buttonOk);
 			this.Controls.Add(this.labelfilename);
@@ -153,5 +178,7 @@
 		private System.Windows.Forms.Label labelfilename;
 		private System.Windows.Forms.Button buttonOk;
 		private System.Windows.Forms.Button buttonCancel;
+		private System.Windows.Forms.RichTextBox richTextBoxMessage;
+		private System.Windows.Forms.Button buttonChooseFile;
 	}
 }
