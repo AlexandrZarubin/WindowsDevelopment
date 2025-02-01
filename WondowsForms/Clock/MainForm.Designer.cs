@@ -70,6 +70,9 @@
 			this.labelTime.TabIndex = 0;
 			this.labelTime.Text = "Time";
 			this.labelTime.DoubleClick += new System.EventHandler(this.labelTime_DoubleClick);
+			this.labelTime.MouseDown += new System.Windows.Forms.MouseEventHandler(this.labelTime_MouseDown);
+			this.labelTime.MouseMove += new System.Windows.Forms.MouseEventHandler(this.labelTime_MouseMove);
+			this.labelTime.MouseUp += new System.Windows.Forms.MouseEventHandler(this.labelTime_MouseUp);
 			// 
 			// contextMenuStrip
 			// 
@@ -260,6 +263,7 @@
 			this.axWindowsMediaPlayer.Size = new System.Drawing.Size(239, 52);
 			this.axWindowsMediaPlayer.TabIndex = 4;
 			this.axWindowsMediaPlayer.Visible = false;
+			this.axWindowsMediaPlayer.PlayStateChange += new AxWMPLib._WMPOCXEvents_PlayStateChangeEventHandler(this.axWindowsMediaPlayer_PlayStateChange);
 			// 
 			// MainForm
 			// 
@@ -277,6 +281,9 @@
 			this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
 			this.Text = "Clock_VPD_311";
 			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
+			this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.MainForm_MouseDown);
+			this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.MainForm_MouseMove);
+			this.MouseUp += new System.Windows.Forms.MouseEventHandler(this.MainForm_MouseUp);
 			this.contextMenuStrip.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)(this.axWindowsMediaPlayer)).EndInit();
 			this.ResumeLayout(false);

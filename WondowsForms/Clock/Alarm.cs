@@ -11,7 +11,7 @@ namespace Clock
 	{
 		public DateTime Date {  get; set; }
 		public TimeSpan Time { get; set; }
-		public Week Week { get; set; }
+		public Week Week { get; set; }=new Week();
 		public string Filename { get; set; }
 		public string Message { get; set; }
 

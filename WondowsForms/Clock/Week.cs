@@ -9,7 +9,7 @@ namespace Clock
 	public class Week
 	{
 		static readonly string[] DAY_NAMES = new string[] { "Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс" };
-		byte days;
+		public byte days { get; set; }
 		//public Week()
 		//{
 		//	days = 0;

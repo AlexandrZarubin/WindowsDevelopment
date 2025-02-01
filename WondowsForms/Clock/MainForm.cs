@@ -20,6 +20,8 @@ namespace Clock
 		FontDialog fontDialog;                                                                  // Диалоговое окно для выбора шрифта
 		AlaramsDialog alarmsDialog;
 		Alarm nextAlarm;
+		private bool isDragging = false;
+		private Point dragStartPoint;
 		public MainForm()																		// Конструктор формы
 		{
 			// Оптимизация отрисовки
@@ -38,6 +40,7 @@ namespace Clock
 			LoadSettings();
 			alarmsDialog = new AlaramsDialog(this);
 			if (fontDialog == null) fontDialog = new FontDialog();
+			LoadAlarms();
 			axWindowsMediaPlayer.Visible = false;
 			
 
@@ -69,6 +72,7 @@ namespace Clock
 				//sr.Close();
 				fontDialog = new FontDialog(fontname, fontsize);                                // Создаем диалог шрифта с параметрами
 				labelTime.Font = fontDialog.Font;                                               // Установка шрифта для метки
+				ToolStripMenuItemLoadOnWindowsStartup.Checked = bool.Parse(sr.ReadLine());
 			}
 			catch (Exception ex)
 			{
@@ -78,6 +82,63 @@ namespace Clock
 			finally                                                                             // Закрываем поток
 			{
 				if(sr != null) sr.Close();
+			}
+		}
+		private void LoadAlarms()
+		{
+			string filePath = Path.Combine($@"{Path.GetDirectoryName(Application.ExecutablePath)}\..\..\SaveAlarm.ini");
+			try
+			{
+				if(File.Exists(filePath))
+				{
+					using (StreamReader sr = new StreamReader(filePath))
+					{
+						if (alarmsDialog != null && alarmsDialog.Alarms != null)
+							alarmsDialog.Alarms.Items.Clear();
+						string line;
+						while ((line = sr.ReadLine()) != null)
+						{
+							string[] parts = line.Split('|');
+							DateTime alarmDate = DateTime.Parse(parts[0]);
+							TimeSpan alarmTime = TimeSpan.Parse(parts[1]);
+							byte days = byte.Parse(parts[2]);
+							string filename = parts[3];
+							string message = parts[4];
+							Alarm alarm = new Alarm
+							{
+								Date = alarmDate,
+								Time = alarmTime,
+								Week = new Week(days),
+								Filename = filename,
+								Message = message
+							};
+							alarmsDialog.Alarms.Items.Add(alarm);
+						}
+					}
+				}
+			}
+			catch(Exception ex)
+			{
+				MessageBox.Show($"Ошибка при загрузке будильников: {ex.Message}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+			}
+		}
+		private void SaveAlarms()
+		{
+			string filePath = Path.Combine($@"{Path.GetDirectoryName(Application.ExecutablePath)}\..\..\SaveAlarm.ini");
+			try
+			{
+				using(StreamWriter sw=new StreamWriter(filePath))
+				{
+					foreach(Alarm alarm in alarmsDialog.Alarms.Items)
+					{
+						string alarmData = $"{alarm.Date:yyyy-MM-dd}|{alarm.Time}|{alarm.Week.days}|{alarm.Filename}|{alarm.Message}";
+						sw.WriteLine(alarmData);
+					}
+				}
+			}
+			catch(Exception ex)
+			{
+				MessageBox.Show($"Ошибка при сохранении будильников: {ex.Message}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
 			}
 		}
 		void SaveSettings()
@@ -97,12 +158,20 @@ namespace Clock
 			sw.WriteLine($"{labelTime.Font.Size}");
 			sw.WriteLine($"{labelTime.BackColor.ToArgb()}");
 			sw.WriteLine($"{labelTime.ForeColor.ToArgb()}");
+			sw.WriteLine($"{ToolStripMenuItemLoadOnWindowsStartup.Checked}");
 			sw.Close();
 		}
 		Alarm FindNextAlarm()
 		{
-			nextAlarm=alarmsDialog.Alarms.Items.Cast<Alarm>().ToArray().Min();
-			return nextAlarm;
+			//nextAlarm=alarmsDialog.Alarms.Items.Cast<Alarm>().ToArray().Min();
+			Alarm[] alarmsArray = alarmsDialog.Alarms.Items.Cast<Alarm>().ToArray();    // Преобразуем элементы списка в массив типа Alarm
+			if (alarmsArray.Length > 0)                                                 // Проверяем, есть ли будильники в массиве
+			{
+				nextAlarm = alarmsArray.Min();                                          // Присваиваем ближайший будильник
+				return nextAlarm;
+			}
+			nextAlarm = null;
+			return null;
 		}
 		private void timer_Tick(object sender, EventArgs e)                         // Обновление времени
 		{
@@ -126,7 +195,12 @@ namespace Clock
 				nextAlarm!=null&&
 				nextAlarm.Time.Hours==DateTime.Now.Hour&&
 				nextAlarm.Time.Minutes==DateTime.Now.Minute&&
-				nextAlarm.Time.Seconds==DateTime.Now.Second
+				nextAlarm.Time.Seconds==DateTime.Now.Second&&
+				(
+				(nextAlarm.Date != DateTime.MinValue &&                     // установлена ли конкретная дата для будильника
+				nextAlarm.Date.Date == DateTime.Now.Date) ||                //проверяется совпадает ли текущая дата с установленной
+				nextAlarm.Week.ToArray()[(int)DateTime.Now.DayOfWeek - 1]   //активен ли будильник для текущего дня недели;индекс текущего дня недели (0 = Понедельник, 6 = Воскресенье)
+				)
 				)
 			{
 				System.Threading.Thread.Sleep(1000);
@@ -227,7 +301,10 @@ namespace Clock
 
 		private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
 		{
+			axWindowsMediaPlayer.Ctlcontrols.stop();
+			axWindowsMediaPlayer.Visible = false;
 			SaveSettings();
+			SaveAlarms();
 		}
 
 		private void ToolStripMenuItemAlarams_Click(object sender, EventArgs e)
@@ -244,6 +321,58 @@ namespace Clock
 			else Key.DeleteValue(key_name, false);                                              //false - throwOnMissingValue
 			Key.Dispose();
 		}
+
+		private void axWindowsMediaPlayer_PlayStateChange(object sender, AxWMPLib._WMPOCXEvents_PlayStateChangeEvent e)
+		{
+			if (e.newState == (int)WMPLib.WMPPlayState.wmppsStopped)
+			{
+				axWindowsMediaPlayer.Visible = false;
+			}
+		}
+
+
+		private void MainForm_MouseDown(object sender, MouseEventArgs e)
+		{
+			if (e.Button == MouseButtons.Left)
+			{
+				isDragging = true;
+				dragStartPoint = e.Location;
+			}
+		}
+
+		private void MainForm_MouseMove(object sender, MouseEventArgs e)
+		{
+			if (isDragging)
+			{
+				this.Left += e.X - dragStartPoint.X;
+				this.Top += e.Y - dragStartPoint.Y;
+			}
+		}
+
+		private void MainForm_MouseUp(object sender, MouseEventArgs e)
+		{
+			if (e.Button == MouseButtons.Left)
+			{
+				isDragging = false;
+			}
+		}
+
+		private void labelTime_MouseDown(object sender, MouseEventArgs e)
+		{
+			MainForm_MouseDown(sender, e);
+		}
+
+		private void labelTime_MouseMove(object sender, MouseEventArgs e)
+		{
+			MainForm_MouseMove(sender, e);
+		}
+
+		private void labelTime_MouseUp(object sender, MouseEventArgs e)
+		{
+			MainForm_MouseUp(sender, e);
+		}
+
+
 
 
 		//private void ToolStripMenuItemsShowControls_CheckedChanged(object sender, EventArgs e)
